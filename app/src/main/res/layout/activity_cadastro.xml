@@ -9,6 +9,21 @@
     android:padding="16dp"
     tools:context=".CadastroActivity">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Cadastro de produto"
+        android:textSize="21sp"
+        android:padding="16dp"
+        android:textStyle="bold"
+        />
+
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@android:drawable/ic_menu_camera"
+        android:layout_gravity="center_horizontal"
+        android:id="@+id/img_foto_produto" />
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -23,6 +38,7 @@
         android:layout_height="wrap_content"
         android:autofillHints="Quantidade"
         android:hint="Quantidade"
+        android:inputType="number"
         android:id="@+id/txt_quantidade"
         />
 
@@ -31,6 +47,7 @@
         android:layout_height="wrap_content"
         android:autofillHints="Valor unitário"
         android:hint="R$0.00"
+        android:inputType="numberDecimal"
         android:id="@+id/txt_valor"
         />
 
