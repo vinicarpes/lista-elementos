@@ -1,6 +1,8 @@
 package com.example.listaelementos
 
 import android.os.Bundle
+import android.view.View
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
@@ -19,10 +21,18 @@ class MainActivity : AppCompatActivity() {
             val produto = txt_produto.text.toString()
             if (produto.isNotBlank()) {
                 produtosAdapter.add(produto)
+                txt_produto.text.clear()
+            }else{
+                txt_produto.error= "Preencha o produto devidamente"
             }
         }
 
         list_view_produtos.adapter = produtosAdapter
+        list_view_produtos.setOnItemLongClickListener{ adapterView : AdapterView<*>, view: View, position: Int, id: Long ->
+            val item = produtosAdapter.getItem(position)
+            produtosAdapter.remove(item)
+            true
+        }
     }
 
 }
