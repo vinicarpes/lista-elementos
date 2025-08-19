@@ -21,6 +21,7 @@
     <ImageView
         android:layout_width="100dp"
         android:layout_height="100dp"
+        android:contentDescription="TODO"
         android:src="@android:drawable/ic_menu_camera"
         android:layout_gravity="center_horizontal"
         android:id="@+id/img_foto_produto" />
@@ -30,7 +31,7 @@
         android:autofillHints="Nome do produto"
         android:hint="Nome do produto"
         android:id="@+id/txt_produto"
-        />
+        android:inputType="text" />
 
 
     <EditText

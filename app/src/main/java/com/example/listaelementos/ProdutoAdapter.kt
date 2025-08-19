@@ -7,8 +7,6 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
-import com.google.android.material.animation.ImageMatrixProperty
-import org.w3c.dom.Text
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -26,7 +24,7 @@ class ProdutoAdapter(contexto: Context) : ArrayAdapter<Produto>(contexto, 0) {
 
         val txt_produto = v.findViewById<TextView>(R.id.txt_item_produto)
         val txt_qtd = v.findViewById<TextView>(R.id.txt_item_qtd)
-        val txt_valor = v.findViewById<TextView>(R.id.txt_valor)
+        val txt_valor = v.findViewById<TextView>(R.id.txt_item_valor)
         val img_produto = v.findViewById<ImageView>(R.id.img_item_foto)
 
         val f = NumberFormat.getCurrencyInstance(Locale("pt", "br"))

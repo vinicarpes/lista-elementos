@@ -15,8 +15,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         val list_view_produtos = findViewById<ListView>(R.id.list_view_produtos)
-
-        val produtosAdapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1)
+        val produtosAdapter = ProdutoAdapter(this)
 
         list_view_produtos.adapter = produtosAdapter
         list_view_produtos.setOnItemLongClickListener { adapterView: AdapterView<*>, view: View, position: Int, id: Long ->
@@ -31,4 +30,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        val list_view_produtos = findViewById<ListView>(R.id.list_view_produtos)
+        val adapter = list_view_produtos.adapter as ProdutoAdapter
+        adapter.addAll(produtosGlobal)
+    }
 }
