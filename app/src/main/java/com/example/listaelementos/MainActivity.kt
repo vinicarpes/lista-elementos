@@ -8,7 +8,10 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ListView
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import java.text.NumberFormat
+import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,7 +36,14 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         val list_view_produtos = findViewById<ListView>(R.id.list_view_produtos)
+        val txt_total= findViewById<TextView>(R.id.txt_total)
         val adapter = list_view_produtos.adapter as ProdutoAdapter
         adapter.addAll(produtosGlobal)
+
+        val soma = produtosGlobal.sumOf( { it.valor * it.quantidade })
+
+        val f = NumberFormat.getCurrencyInstance(Locale("pt", "br"))
+
+        txt_total.text = "TOTAL: ${f.format(soma)}"
     }
 }
