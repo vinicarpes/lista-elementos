@@ -1,38 +1,49 @@
 package com.example.listaelementos
 
-import android.app.Activity
 import android.content.Intent
-import android.content.ServiceConnection
 import android.os.Bundle
+import android.view.View
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
-import android.widget.Spinner
+import android.widget.ListView
 import android.widget.TextView
-import java.util.concurrent.Executor
+import androidx.appcompat.app.AppCompatActivity
+import java.text.NumberFormat
+import java.util.Locale
 
-class MainActivity : Activity() {
+class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // definindo o layout dessa activity ao criar o componente
         setContentView(R.layout.activity_main)
-        val spn_sexo = findViewById<Spinner>(R.id.spn_sexo)
-        val txt_idade = findViewById<EditText>(R.id.txt_idade)
-        val txt_resultado = findViewById<TextView>(R.id.txt_resultado)
-        val btn_calcular = findViewById<Button>(R.id.btn_calcular)
-        spn_sexo.adapter = ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, listOf("Masculino", "Feminino"))
+        val list_view_produtos = findViewById<ListView>(R.id.list_view_produtos)
+        val produtosAdapter = ProdutoAdapter(this)
 
-        btn_calcular.setOnClickListener{
-            val sexo = spn_sexo.selectedItem as String
-            val idade = txt_idade.text.toString().toInt()
-            var resultado = 0
-            if(sexo == "Masculino"){
-                resultado = 65 - idade
-            }else{
-                resultado = 60 - idade
-            }
-
-            txt_resultado.text = "Faltam $resultado anos para você se aposentar."
+        list_view_produtos.adapter = produtosAdapter
+        list_view_produtos.setOnItemLongClickListener { adapterView: AdapterView<*>, view: View, position: Int, id: Long ->
+            val item = produtosAdapter.getItem(position)
+            produtosAdapter.remove(item)
+            true
         }
+        val btn_adicionar = findViewById<Button>(R.id.btn_adicionar)
+        btn_adicionar.setOnClickListener {
+            val intent = Intent(this, CadastroActivity::class.java)
+            startActivity(intent)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val list_view_produtos = findViewById<ListView>(R.id.list_view_produtos)
+        val txt_total= findViewById<TextView>(R.id.txt_total)
+        val adapter = list_view_produtos.adapter as ProdutoAdapter
+        adapter.addAll(produtosGlobal)
+
+        val soma = produtosGlobal.sumOf( { it.valor * it.quantidade })
+
+        val f = NumberFormat.getCurrencyInstance(Locale("pt", "br"))
+
+        txt_total.text = "TOTAL: ${f.format(soma)}"
     }
 }
