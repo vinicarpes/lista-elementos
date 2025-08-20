@@ -1,11 +1,12 @@
-package com.example.listaelementos
+package com.example.listaelementos.database
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-
-@Database(entities = [Produto::class], version = 1)
+import com.example.listaelementos.database.dao.ProdutoDao
+import com.example.listaelementos.database.entities.ProdutoEntity
+@Database(entities = [ProdutoEntity::class], version = 1)
 abstract class ListaComprasDatabase : RoomDatabase() {
     abstract fun produtoDao(): ProdutoDao
     companion object {

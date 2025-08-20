@@ -1,4 +1,4 @@
-package com.example.listaelementos
+package com.example.listaelementos.ui.adapters
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
+import com.example.listaelementos.R
+import com.example.listaelementos.domain.models.Produto
 import java.text.NumberFormat
 import java.util.Locale
 

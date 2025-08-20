@@ -4,12 +4,19 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import android.widget.Button
-import android.widget.EditText
 import android.widget.ListView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
+import com.example.listaelementos.database.database
+import com.example.listaelementos.repositories.ProdutoRepository
+import com.example.listaelementos.repositories.toProduto
+import com.example.listaelementos.ui.activities.CadastroActivity
+import com.example.listaelementos.ui.adapters.ProdutoAdapter
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -35,15 +42,22 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        val repository = ProdutoRepository(database.produtoDao())
         val list_view_produtos = findViewById<ListView>(R.id.list_view_produtos)
-        val txt_total= findViewById<TextView>(R.id.txt_total)
+        val txt_total = findViewById<TextView>(R.id.txt_total)
         val adapter = list_view_produtos.adapter as ProdutoAdapter
-        adapter.addAll(produtosGlobal)
+        lifecycleScope.launch {
 
-        val soma = produtosGlobal.sumOf( { it.valor * it.quantidade })
+            val produtos = withContext(Dispatchers.IO) {
+                repository.produtos
+            }
 
-        val f = NumberFormat.getCurrencyInstance(Locale("pt", "br"))
+            adapter.clear()
+            adapter.addAll(produtos.map { it.toProduto() })
 
-        txt_total.text = "TOTAL: ${f.format(soma)}"
+            val soma = produtos.sumOf { it.valor * it.quantidade }
+            val f = NumberFormat.getCurrencyInstance(Locale("pt", "br"))
+            txt_total.text = "TOTAL: ${f.format(soma)}"
+        }
     }
 }

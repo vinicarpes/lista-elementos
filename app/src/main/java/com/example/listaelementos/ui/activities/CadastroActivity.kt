@@ -1,19 +1,20 @@
-package com.example.listaelementos
+package com.example.listaelementos.ui.activities
 
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
-import android.view.GestureDetector
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
-import android.widget.TextView
-import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.registerForActivityResult
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
+import com.example.listaelementos.R
+import com.example.listaelementos.database.database
+import com.example.listaelementos.domain.models.Produto
+import com.example.listaelementos.utils.produtosGlobal
+import com.example.listaelementos.repositories.ProdutoRepository
+import kotlinx.coroutines.launch
 
 class CadastroActivity : AppCompatActivity() {
     val COD_IMAGE = 101
@@ -30,6 +31,7 @@ class CadastroActivity : AppCompatActivity() {
         val img_foto_produto = findViewById<ImageView>(R.id.img_foto_produto)
 
         btn_inserir.setOnClickListener {
+            val produtoRepository = ProdutoRepository(database.produtoDao())
             val produto = txt_produto.text.toString()
             val valor = txt_valor.text.toString()
             val qtd = txt_qtd.text.toString()
@@ -40,6 +42,9 @@ class CadastroActivity : AppCompatActivity() {
                 txt_qtd.text.clear()
                 txt_valor.text.clear()
                 img_foto_produto.setImageResource(android.R.drawable.ic_menu_camera)
+                lifecycleScope.launch {
+                    produtoRepository.save(prod)
+                }
             }else{
                 txt_produto.error= if(txt_produto.text.isNotEmpty()) "Preencha o produto devidamente" else null
                 txt_qtd.error= if(txt_qtd.text.isNotEmpty()) "Preencha a quantidade devidamente" else null
