@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.listaelementos.R
@@ -45,10 +46,13 @@ class CadastroActivity : AppCompatActivity() {
                 lifecycleScope.launch {
                     produtoRepository.save(prod)
                 }
+                finish()
+                Toast.makeText(this, "Produto inserido com sucesso", Toast.LENGTH_SHORT).show()
             }else{
                 txt_produto.error= if(txt_produto.text.isNotEmpty()) "Preencha o produto devidamente" else null
                 txt_qtd.error= if(txt_qtd.text.isNotEmpty()) "Preencha a quantidade devidamente" else null
                 txt_valor.error= if(txt_valor.text.isNotEmpty()) "Preencha o valor devidamente" else null
+                Toast.makeText(this, "Preencha todos os campos obrigatórios", Toast.LENGTH_LONG).show()
             }
         }
 
