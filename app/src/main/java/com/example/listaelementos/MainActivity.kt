@@ -2,11 +2,6 @@ package com.example.listaelementos
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
-import android.widget.AdapterView
-import android.widget.Button
-import android.widget.ListView
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.listaelementos.database.database
@@ -17,7 +12,6 @@ import com.example.listaelementos.repositories.toProduto
 import com.example.listaelementos.ui.activities.CadastroActivity
 import com.example.listaelementos.ui.adapters.ProdutoAdapter
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.text.NumberFormat
@@ -36,13 +30,13 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-        val list_view_produtos = binding.recyclerViewProdutos
+        val recycler_view_produtos = binding.recyclerViewProdutos
         val produtosAdapter = ProdutoAdapter(
             context = this,
             produtos = produtos
         )
 
-        list_view_produtos.adapter = produtosAdapter
+        recycler_view_produtos.adapter = produtosAdapter
 
         val btn_adicionar = binding.btnAdicionar
         btn_adicionar.setOnClickListener {
@@ -54,9 +48,9 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         val repository = ProdutoRepository(database.produtoDao())
-        val list_view_produtos = binding.recyclerViewProdutos
+        val recycler_view_produtos = binding.recyclerViewProdutos
         val txt_total = binding.txtTotal
-        val adapter = list_view_produtos.adapter as ProdutoAdapter
+        val adapter = recycler_view_produtos.adapter as ProdutoAdapter
         lifecycleScope.launch {
             produtos = withContext(Dispatchers.IO) {
                 repository.produtos.map { it.toProduto() }
