@@ -7,36 +7,48 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 import com.example.listaelementos.R
+import com.example.listaelementos.databinding.ListViewItemBinding
 import com.example.listaelementos.domain.models.Produto
 import java.text.NumberFormat
 import java.util.Locale
 
-class ProdutoAdapter(contexto: Context) : ArrayAdapter<Produto>(contexto, 0) {
-    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        val v: View
-        if (convertView != null) {
-            v = convertView
-        } else {
-            //inflar o layout
-            v = LayoutInflater.from(context).inflate(R.layout.list_view_item, parent, false)
+class ProdutoAdapter(private val context: Context, private var produtos: List<Produto>) :
+    RecyclerView.Adapter<ProdutoAdapter.ViewHolder>() {
+
+    class ViewHolder(private val listViewItemBinding: ListViewItemBinding) :
+        RecyclerView.ViewHolder(listViewItemBinding.root) {
+        fun bind(prod: Produto) {
+            listViewItemBinding.txtItemProduto.text = prod.nome
+            listViewItemBinding.txtItemQtd.text = prod.quantidade.toString()
+            listViewItemBinding.txtItemValor.text = prod.valor.toString()
+            listViewItemBinding.imgItemFoto.setImageResource(android.R.drawable.ic_menu_camera)
         }
+    }
 
-        val item = getItem(position)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
+        ViewHolder(
+            ListViewItemBinding.inflate(
+                LayoutInflater.from(context),
+                parent,
+                false
+            )
+        )
 
-        val txt_produto = v.findViewById<TextView>(R.id.txt_item_produto)
-        val txt_qtd = v.findViewById<TextView>(R.id.txt_item_qtd)
-        val txt_valor = v.findViewById<TextView>(R.id.txt_item_valor)
-        val img_produto = v.findViewById<ImageView>(R.id.img_item_foto)
 
-        val f = NumberFormat.getCurrencyInstance(Locale("pt", "br"))
+    override fun onBindViewHolder(
+        holder: ViewHolder,
+        position: Int
+    ) {
+        val prod = produtos[position]
+        holder.bind(prod)
+    }
 
-        txt_qtd.text = item?.quantidade.toString()
-        txt_produto.text = item?.nome
-        txt_valor.text = f.format(item?.valor)
-        if (item?.foto != null){
-            img_produto.setImageURI(null)
-        }
-        return v
+    override fun getItemCount(): Int = produtos.size
+
+    fun updateData(produtos: List<Produto>){
+        this.produtos = produtos
+        notifyDataSetChanged()
     }
 }

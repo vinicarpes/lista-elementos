@@ -11,11 +11,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.listaelementos.database.database
 import com.example.listaelementos.databinding.ActivityMainBinding
+import com.example.listaelementos.domain.models.Produto
 import com.example.listaelementos.repositories.ProdutoRepository
 import com.example.listaelementos.repositories.toProduto
 import com.example.listaelementos.ui.activities.CadastroActivity
 import com.example.listaelementos.ui.adapters.ProdutoAdapter
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.text.NumberFormat
@@ -23,22 +25,25 @@ import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
 
+    var produtos: List<Produto> = emptyList()
+
     private lateinit var binding: ActivityMainBinding
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-        val list_view_produtos = binding.listViewProdutos
-        val produtosAdapter = ProdutoAdapter(this)
+        val list_view_produtos = binding.recyclerViewProdutos
+        val produtosAdapter = ProdutoAdapter(
+            context = this,
+            produtos = produtos
+        )
 
         list_view_produtos.adapter = produtosAdapter
-        list_view_produtos.setOnItemLongClickListener { adapterView: AdapterView<*>, view: View, position: Int, id: Long ->
-            val item = produtosAdapter.getItem(position)
-            produtosAdapter.remove(item)
-            true
-        }
+
         val btn_adicionar = binding.btnAdicionar
         btn_adicionar.setOnClickListener {
             val intent = Intent(this, CadastroActivity::class.java)
@@ -49,17 +54,15 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         val repository = ProdutoRepository(database.produtoDao())
-        val list_view_produtos = binding.listViewProdutos
+        val list_view_produtos = binding.recyclerViewProdutos
         val txt_total = binding.txtTotal
         val adapter = list_view_produtos.adapter as ProdutoAdapter
         lifecycleScope.launch {
-
-            val produtos = withContext(Dispatchers.IO) {
-                repository.produtos
+            produtos = withContext(Dispatchers.IO) {
+                repository.produtos.map { it.toProduto() }
             }
 
-            adapter.clear()
-            adapter.addAll(produtos.map { it.toProduto() })
+            adapter.updateData(produtos)
 
             val soma = produtos.sumOf { it.valor * it.quantidade }
             val f = NumberFormat.getCurrencyInstance(Locale("pt", "br"))
