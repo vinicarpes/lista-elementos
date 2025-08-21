@@ -10,6 +10,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.listaelementos.database.database
+import com.example.listaelementos.databinding.ActivityMainBinding
 import com.example.listaelementos.repositories.ProdutoRepository
 import com.example.listaelementos.repositories.toProduto
 import com.example.listaelementos.ui.activities.CadastroActivity
@@ -21,10 +22,15 @@ import java.text.NumberFormat
 import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        val list_view_produtos = findViewById<ListView>(R.id.list_view_produtos)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
+        val list_view_produtos = binding.listViewProdutos
         val produtosAdapter = ProdutoAdapter(this)
 
         list_view_produtos.adapter = produtosAdapter
@@ -33,7 +39,7 @@ class MainActivity : AppCompatActivity() {
             produtosAdapter.remove(item)
             true
         }
-        val btn_adicionar = findViewById<Button>(R.id.btn_adicionar)
+        val btn_adicionar = binding.btnAdicionar
         btn_adicionar.setOnClickListener {
             val intent = Intent(this, CadastroActivity::class.java)
             startActivity(intent)
@@ -43,8 +49,8 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         val repository = ProdutoRepository(database.produtoDao())
-        val list_view_produtos = findViewById<ListView>(R.id.list_view_produtos)
-        val txt_total = findViewById<TextView>(R.id.txt_total)
+        val list_view_produtos = binding.listViewProdutos
+        val txt_total = binding.txtTotal
         val adapter = list_view_produtos.adapter as ProdutoAdapter
         lifecycleScope.launch {
 

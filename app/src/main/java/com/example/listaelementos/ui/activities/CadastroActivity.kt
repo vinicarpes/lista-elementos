@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.listaelementos.R
 import com.example.listaelementos.database.database
+import com.example.listaelementos.databinding.ActivityCadastroBinding
 import com.example.listaelementos.domain.models.Produto
 import com.example.listaelementos.utils.produtosGlobal
 import com.example.listaelementos.repositories.ProdutoRepository
@@ -21,15 +22,19 @@ class CadastroActivity : AppCompatActivity() {
     val COD_IMAGE = 101
     var imageBitMap: Bitmap? = null
 
+    private lateinit var binding: ActivityCadastroBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_cadastro)
+        binding = ActivityCadastroBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
-        val txt_produto =findViewById<EditText>(R.id.txt_produto)
-        val txt_qtd = findViewById<EditText>(R.id.txt_quantidade)
-        val txt_valor = findViewById<EditText>(R.id.txt_valor)
-        val btn_inserir = findViewById<Button>(R.id.btn_inserir)
-        val img_foto_produto = findViewById<ImageView>(R.id.img_foto_produto)
+        val txt_produto =binding.txtProduto
+        val txt_qtd = binding.txtQuantidade
+        val txt_valor = binding.txtValor
+        val btn_inserir = binding.btnInserir
+        val img_foto_produto = binding.imgFotoProduto
 
         btn_inserir.setOnClickListener {
             val produtoRepository = ProdutoRepository(database.produtoDao())
@@ -63,7 +68,7 @@ class CadastroActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        val img_foto_produto = findViewById<ImageView>(R.id.img_foto_produto)
+        val img_foto_produto = binding.imgFotoProduto
 
         if (requestCode == COD_IMAGE && resultCode == RESULT_OK){
             if (data != null) {

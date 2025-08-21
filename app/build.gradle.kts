@@ -8,6 +8,10 @@ android {
     namespace = "com.example.listaelementos"
     compileSdk = 36
 
+    buildFeatures {
+        viewBinding = true
+    }
+
     defaultConfig {
         applicationId = "com.example.listaelementos"
         minSdk = 28
