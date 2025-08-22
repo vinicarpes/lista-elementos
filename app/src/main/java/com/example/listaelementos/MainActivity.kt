@@ -30,26 +30,26 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-        val recycler_view_produtos = binding.recyclerViewProdutos
         val produtosAdapter = ProdutoAdapter(
             context = this,
             produtos = produtos
         )
 
-        recycler_view_produtos.adapter = produtosAdapter
+        binding.apply{
+            recyclerViewProdutos.adapter = produtosAdapter
 
-        binding.btnAdicionar.setOnClickListener {
-            val intent = Intent(this, CadastroActivity::class.java)
-            startActivity(intent)
+            btnAdicionar.setOnClickListener {
+                val intent = Intent(this@MainActivity, CadastroActivity::class.java)
+                startActivity(intent)
+            }
         }
+
     }
 
     override fun onResume() {
         super.onResume()
         val repository = ProdutoRepository(database.produtoDao())
-        val recycler_view_produtos = binding.recyclerViewProdutos
-        val txt_total = binding.txtTotal
-        val adapter = recycler_view_produtos.adapter as ProdutoAdapter
+        val adapter = binding.recyclerViewProdutos.adapter as ProdutoAdapter
         lifecycleScope.launch {
             produtos = withContext(Dispatchers.IO) {
                 repository.produtos.map { it.toProduto() }
@@ -59,7 +59,7 @@ class MainActivity : AppCompatActivity() {
 
             val soma = produtos.sumOf { it.valor * it.quantidade }
             val f = NumberFormat.getCurrencyInstance(Locale("pt", "br"))
-            txt_total.text = "TOTAL: ${f.format(soma)}"
+            binding.txtTotal.text = "TOTAL: ${f.format(soma)}"
         }
     }
 }
