@@ -14,13 +14,6 @@ abstract class ListaComprasDatabase : RoomDatabase() {
 
         @Synchronized
         fun getInstace(ctx: Context): ListaComprasDatabase {
-            if (instance == null) {
-                instance = Room.databaseBuilder(
-                    ctx.applicationContext,
-                    ListaComprasDatabase::class.java,
-                    "lista_compras_database"
-                ).build()
-            }
             return instance ?: Room.databaseBuilder(
                 ctx.applicationContext,
                 ListaComprasDatabase::class.java,
