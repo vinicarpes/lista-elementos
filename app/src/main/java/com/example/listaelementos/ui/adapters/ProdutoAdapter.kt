@@ -10,13 +10,13 @@ import com.example.listaelementos.domain.models.Produto
 class ProdutoAdapter(private val context: Context, private var produtos: List<Produto>) :
     RecyclerView.Adapter<ProdutoAdapter.ViewHolder>() {
 
-    class ViewHolder(private val recycler_view_produtos: RecyclerViewItemBinding) :
-        RecyclerView.ViewHolder(recycler_view_produtos.root) {
+    class ViewHolder(private val recyclerViewProdutos: RecyclerViewItemBinding) :
+        RecyclerView.ViewHolder(recyclerViewProdutos.root) {
         fun bind(prod: Produto) {
-            recycler_view_produtos.txtItemProduto.text = prod.nome
-            recycler_view_produtos.txtItemQtd.text = prod.quantidade.toString()
-            recycler_view_produtos.txtItemValor.text = prod.valor.toString()
-            recycler_view_produtos.imgItemFoto.setImageResource(android.R.drawable.ic_menu_camera)
+            recyclerViewProdutos.txtItemProduto.text = prod.nome
+            recyclerViewProdutos.txtItemQtd.text = prod.quantidade.toString()
+            recyclerViewProdutos.txtItemValor.text = prod.valor.toString()
+            recyclerViewProdutos.imgItemFoto.setImageResource(android.R.drawable.ic_menu_camera)
         }
     }
 

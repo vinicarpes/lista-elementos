@@ -30,58 +30,69 @@ class CadastroActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
 
-        val txt_produto =binding.txtProduto
-        val txt_qtd = binding.txtQuantidade
-        val txt_valor = binding.txtValor
-        val img_foto_produto = binding.imgFotoProduto
-
-        binding.btnInserir.setOnClickListener {
-            val produtoRepository = ProdutoRepository(database.produtoDao())
-            val produto = txt_produto.text.toString()
-            val valor = txt_valor.text.toString()
-            val qtd = txt_qtd.text.toString()
-            if ((produto.isNotEmpty() && valor.isNotEmpty() && qtd.isNotEmpty())) {
-                val prod = Produto(produto, valor.toDouble(), qtd.toInt(), imageBitMap)
-                produtosGlobal.add(prod)
-                txt_produto.text.clear()
-                txt_qtd.text.clear()
-                txt_valor.text.clear()
-                img_foto_produto.setImageResource(android.R.drawable.ic_menu_camera)
-                lifecycleScope.launch {
-                    produtoRepository.save(prod)
+        binding.apply {
+            btnInserir.setOnClickListener {
+                val produtoRepository = ProdutoRepository(database.produtoDao())
+                val produto = txtProduto.text.toString()
+                val valor = txtValor.text.toString()
+                val qtd = txtQuantidade.text.toString()
+                if ((produto.isNotEmpty() && valor.isNotEmpty() && qtd.isNotEmpty())) {
+                    val prod = Produto(produto,
+                        valor.toDouble(),
+                        qtd.toInt(),
+                        imageBitMap
+                    )
+                    produtosGlobal.add(prod)
+                    txtProduto.text.clear()
+                    txtQuantidade.text.clear()
+                    txtValor.text.clear()
+                    imgFotoProduto.setImageResource(android.R.drawable.ic_menu_camera)
+                    lifecycleScope.launch {
+                        produtoRepository.save(prod)
+                    }
+                    finish()
+                    Toast.makeText(
+                        this@CadastroActivity,
+                        "Produto inserido com sucesso",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    txtProduto.error =
+                        if (txtProduto.text.isNotEmpty()) "Preencha o produto devidamente" else null
+                    txtQuantidade.error =
+                        if (txtQuantidade.text.isNotEmpty()) "Preencha a quantidade devidamente" else null
+                    txtValor.error =
+                        if (txtValor.text.isNotEmpty()) "Preencha o valor devidamente" else null
+                    Toast.makeText(
+                        this@CadastroActivity,
+                        "Preencha todos os campos obrigatórios",
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
-                finish()
-                Toast.makeText(this, "Produto inserido com sucesso", Toast.LENGTH_SHORT).show()
-            }else{
-                txt_produto.error= if(txt_produto.text.isNotEmpty()) "Preencha o produto devidamente" else null
-                txt_qtd.error= if(txt_qtd.text.isNotEmpty()) "Preencha a quantidade devidamente" else null
-                txt_valor.error= if(txt_valor.text.isNotEmpty()) "Preencha o valor devidamente" else null
-                Toast.makeText(this, "Preencha todos os campos obrigatórios", Toast.LENGTH_LONG).show()
             }
-        }
 
-        img_foto_produto.setOnClickListener{
-            abrirGaleria()
+            imgFotoProduto.setOnClickListener {
+                abrirGaleria()
+            }
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        val img_foto_produto = binding.imgFotoProduto
 
-        if (requestCode == COD_IMAGE && resultCode == RESULT_OK){
+        if (requestCode == COD_IMAGE && resultCode == RESULT_OK) {
             if (data != null) {
                 //lendo a uri da imagem selecionada
                 val inputStream = contentResolver.openInputStream(data.data!!)
                 //transformando o resultado em bitmap
                 imageBitMap = BitmapFactory.decodeStream(inputStream)
                 //exibindo a imagem na tela
-                img_foto_produto.setImageBitmap(imageBitMap)
+                binding.imgFotoProduto.setImageBitmap(imageBitMap)
             }
         }
     }
 
-    fun abrirGaleria(){
+    fun abrirGaleria() {
         val intent = Intent(Intent.ACTION_GET_CONTENT)
 
         intent.type = "image/*"

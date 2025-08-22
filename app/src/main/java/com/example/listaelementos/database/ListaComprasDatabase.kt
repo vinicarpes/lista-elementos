@@ -21,7 +21,11 @@ abstract class ListaComprasDatabase : RoomDatabase() {
                     "lista_compras_database"
                 ).build()
             }
-            return instance!!
+            return instance ?: Room.databaseBuilder(
+                ctx.applicationContext,
+                ListaComprasDatabase::class.java,
+                "lista_compras_database"
+            ).build()
         }
     }
 }

@@ -36,8 +36,4 @@
         tools:listitem="@layout/recycler_view_item"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         />
-<!--    <ListView-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:id="@+id/list_view_produtos"/>-->
 </LinearLayout>
