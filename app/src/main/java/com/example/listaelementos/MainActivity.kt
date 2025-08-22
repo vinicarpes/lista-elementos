@@ -38,8 +38,7 @@ class MainActivity : AppCompatActivity() {
 
         recycler_view_produtos.adapter = produtosAdapter
 
-        val btn_adicionar = binding.btnAdicionar
-        btn_adicionar.setOnClickListener {
+        binding.btnAdicionar.setOnClickListener {
             val intent = Intent(this, CadastroActivity::class.java)
             startActivity(intent)
         }

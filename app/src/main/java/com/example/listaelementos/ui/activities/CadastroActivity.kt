@@ -33,15 +33,14 @@ class CadastroActivity : AppCompatActivity() {
         val txt_produto =binding.txtProduto
         val txt_qtd = binding.txtQuantidade
         val txt_valor = binding.txtValor
-        val btn_inserir = binding.btnInserir
         val img_foto_produto = binding.imgFotoProduto
 
-        btn_inserir.setOnClickListener {
+        binding.btnInserir.setOnClickListener {
             val produtoRepository = ProdutoRepository(database.produtoDao())
             val produto = txt_produto.text.toString()
             val valor = txt_valor.text.toString()
             val qtd = txt_qtd.text.toString()
-            if (!(produto.isEmpty() && valor.isEmpty() && qtd.isEmpty())) {
+            if ((produto.isNotEmpty() && valor.isNotEmpty() && qtd.isNotEmpty())) {
                 val prod = Produto(produto, valor.toDouble(), qtd.toInt(), imageBitMap)
                 produtosGlobal.add(prod)
                 txt_produto.text.clear()
