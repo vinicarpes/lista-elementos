@@ -2,48 +2,64 @@ package com.example.listaelementos
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ListView
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
+import com.example.listaelementos.database.database
+import com.example.listaelementos.databinding.ActivityMainBinding
+import com.example.listaelementos.domain.models.Produto
+import com.example.listaelementos.repositories.ProdutoRepository
+import com.example.listaelementos.repositories.toProduto
+import com.example.listaelementos.ui.activities.CadastroActivity
+import com.example.listaelementos.ui.adapters.ProdutoAdapter
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.NumberFormat
 import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
+
+    var produtos: List<Produto> = emptyList()
+
+    private lateinit var binding: ActivityMainBinding
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        val list_view_produtos = findViewById<ListView>(R.id.list_view_produtos)
-        val produtosAdapter = ProdutoAdapter(this)
 
-        list_view_produtos.adapter = produtosAdapter
-        list_view_produtos.setOnItemLongClickListener { adapterView: AdapterView<*>, view: View, position: Int, id: Long ->
-            val item = produtosAdapter.getItem(position)
-            produtosAdapter.remove(item)
-            true
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
+        val produtosAdapter = ProdutoAdapter(
+            context = this,
+            produtos = produtos
+        )
+
+        binding.apply{
+            recyclerViewProdutos.adapter = produtosAdapter
+
+            btnAdicionar.setOnClickListener {
+                val intent = Intent(this@MainActivity, CadastroActivity::class.java)
+                startActivity(intent)
+            }
         }
-        val btn_adicionar = findViewById<Button>(R.id.btn_adicionar)
-        btn_adicionar.setOnClickListener {
-            val intent = Intent(this, CadastroActivity::class.java)
-            startActivity(intent)
-        }
+
     }
 
     override fun onResume() {
         super.onResume()
-        val list_view_produtos = findViewById<ListView>(R.id.list_view_produtos)
-        val txt_total= findViewById<TextView>(R.id.txt_total)
-        val adapter = list_view_produtos.adapter as ProdutoAdapter
-        adapter.addAll(produtosGlobal)
+        val repository = ProdutoRepository(database.produtoDao())
+        val adapter = binding.recyclerViewProdutos.adapter as ProdutoAdapter
+        lifecycleScope.launch {
+            produtos = withContext(Dispatchers.IO) {
+                repository.produtos.map { it.toProduto() }
+            }
 
-        val soma = produtosGlobal.sumOf( { it.valor * it.quantidade })
+            adapter.updateData(produtos)
 
-        val f = NumberFormat.getCurrencyInstance(Locale("pt", "br"))
-
-        txt_total.text = "TOTAL: ${f.format(soma)}"
+            val soma = produtos.sumOf { it.valor * it.quantidade }
+            val f = NumberFormat.getCurrencyInstance(Locale("pt", "br"))
+            binding.txtTotal.text = "TOTAL: ${f.format(soma)}"
+        }
     }
 }

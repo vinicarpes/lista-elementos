@@ -1,0 +1,27 @@
+package com.example.listaelementos.database
+
+import android.content.Context
+import androidx.room.Database
+import androidx.room.Room
+import androidx.room.RoomDatabase
+import com.example.listaelementos.database.dao.ProdutoDao
+import com.example.listaelementos.database.entities.ProdutoEntity
+@Database(entities = [ProdutoEntity::class], version = 1)
+abstract class ListaComprasDatabase : RoomDatabase() {
+    abstract fun produtoDao(): ProdutoDao
+    companion object {
+        private var instance: ListaComprasDatabase? = null
+
+        @Synchronized
+        fun getInstace(ctx: Context): ListaComprasDatabase {
+            return instance ?: Room.databaseBuilder(
+                ctx.applicationContext,
+                ListaComprasDatabase::class.java,
+                "lista_compras_database"
+            ).build()
+        }
+    }
+}
+
+val Context.database: ListaComprasDatabase
+    get() = ListaComprasDatabase.getInstace(applicationContext)

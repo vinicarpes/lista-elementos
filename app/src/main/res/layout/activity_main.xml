@@ -2,8 +2,11 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:padding="16dp">
+
 
     <Button
         android:layout_width="match_parent"
@@ -22,8 +25,15 @@
         android:id="@+id/txt_total"
         />
 
-    <ListView
+    <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/list_view_produtos"/>
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:id="@+id/recycler_view_produtos"
+        tools:listitem="@layout/recycler_view_item"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        />
 </LinearLayout>

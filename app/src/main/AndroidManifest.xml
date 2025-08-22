@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ListaElementos">
         <activity
-            android:name=".CadastroActivity"
+            android:name=".ui.activities.CadastroActivity"
             android:exported="false">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
