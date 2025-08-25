@@ -34,6 +34,11 @@ class MainActivity : AppCompatActivity() {
         val produtosAdapter = ProdutoAdapter(
             context = this
         )
+        viewModel.produtos.observe(this) { produtos ->
+            produtosAdapter.setList(produtos)
+            updateTotal(produtos)
+        }
+        viewModel.getProdutos()
 
         binding.apply {
             recyclerViewProdutos.adapter = produtosAdapter
@@ -48,14 +53,12 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        val adapter = binding.recyclerViewProdutos.adapter as ProdutoAdapter
         viewModel.getProdutos()
-        viewModel.produtos.observe(this) {
-            adapter.setList(it)
-        }
-
+    }
+    private fun updateTotal(produtos: List<Produto>) {
         val soma = produtos.sumOf { it.valor * it.quantidade }
         val f = NumberFormat.getCurrencyInstance(Locale("pt", "br"))
         binding.txtTotal.text = "TOTAL: ${f.format(soma)}"
     }
+
 }

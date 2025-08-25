@@ -11,6 +11,7 @@ import com.example.listaelementos.repositories.ProdutoRepository
 import com.example.listaelementos.repositories.toProduto
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainViewModel(context: Context) : ViewModel() {
     val repository = ProdutoRepository(context.database.produtoDao())
