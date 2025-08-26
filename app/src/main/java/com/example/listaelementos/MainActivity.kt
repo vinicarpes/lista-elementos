@@ -36,7 +36,7 @@ class MainActivity : AppCompatActivity() {
         )
         viewModel.produtos.observe(this) { produtos ->
             produtosAdapter.setList(produtos)
-            updateTotal(produtos)
+            binding.txtTotal.text = "TOTAL: ${viewModel.updateTotal(produtos)}"
         }
         viewModel.getProdutos()
 
@@ -55,10 +55,4 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         viewModel.getProdutos()
     }
-    private fun updateTotal(produtos: List<Produto>) {
-        val soma = produtos.sumOf { it.valor * it.quantidade }
-        val f = NumberFormat.getCurrencyInstance(Locale("pt", "br"))
-        binding.txtTotal.text = "TOTAL: ${f.format(soma)}"
-    }
-
 }
