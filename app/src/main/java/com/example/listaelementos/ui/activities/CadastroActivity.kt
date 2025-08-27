@@ -16,11 +16,15 @@ import com.example.listaelementos.databinding.ActivityCadastroBinding
 import com.example.listaelementos.domain.models.Produto
 import com.example.listaelementos.utils.produtosGlobal
 import com.example.listaelementos.repositories.ProdutoRepository
+import com.example.listaelementos.ui.viewmodels.CadastroViewModel
+import com.example.listaelementos.ui.viewmodels.MainViewModel
 import kotlinx.coroutines.launch
 
 class CadastroActivity : AppCompatActivity() {
     val COD_IMAGE = 101
     var imageBitMap: Bitmap? = null
+
+    private lateinit var viewModel: CadastroViewModel
 
     private lateinit var binding: ActivityCadastroBinding
 
@@ -30,46 +34,35 @@ class CadastroActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
 
+        viewModel = CadastroViewModel(this.application)
+
+        viewModel.saveSuccessEvent.observe(this) { succes ->
+            if(succes){
+                Toast.makeText(this, "Produto inserido com sucesso", Toast.LENGTH_SHORT).show()
+                finish()
+            }
+        }
+
+        viewModel.toastMessage.observe(this) { message ->
+            message?.let{
+                Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
+                viewModel.onToastShown()
+            }
+        }
+
         binding.apply {
             btnInserir.setOnClickListener {
-                val produtoRepository = ProdutoRepository(database.produtoDao())
-                val produto = txtProduto.text.toString()
+                val nome = txtProduto.text.toString()
                 val valor = txtValor.text.toString()
                 val qtd = txtQuantidade.text.toString()
-                if ((produto.isNotEmpty() && valor.isNotEmpty() && qtd.isNotEmpty())) {
-                    val prod = Produto(produto,
-                        valor.toDouble(),
-                        qtd.toInt(),
-                        imageBitMap
-                    )
-                    produtosGlobal.add(prod)
-                    txtProduto.text.clear()
-                    txtQuantidade.text.clear()
-                    txtValor.text.clear()
-                    imgFotoProduto.setImageResource(android.R.drawable.ic_menu_camera)
-                    lifecycleScope.launch {
-                        produtoRepository.save(prod)
-                    }
-                    finish()
-                    Toast.makeText(
-                        this@CadastroActivity,
-                        "Produto inserido com sucesso",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                } else {
-                    txtProduto.error =
-                        if (txtProduto.text.isNotEmpty()) "Preencha o produto devidamente" else null
-                    txtQuantidade.error =
-                        if (txtQuantidade.text.isNotEmpty()) "Preencha a quantidade devidamente" else null
-                    txtValor.error =
-                        if (txtValor.text.isNotEmpty()) "Preencha o valor devidamente" else null
-                    Toast.makeText(
-                        this@CadastroActivity,
-                        "Preencha todos os campos obrigatórios",
-                        Toast.LENGTH_LONG
-                    ).show()
+
+                try{
+                    viewModel.valiadateToSaveProduct(Produto(nome, valor.toDouble(), qtd.toInt(), imageBitMap))
+                } catch (e: RuntimeException){ // excecao generica, apenas para fins didaticos
+                    Toast.makeText(this@CadastroActivity, "Preencha todos os campos corretamente", Toast.LENGTH_SHORT).show()
                 }
             }
+
 
             imgFotoProduto.setOnClickListener {
                 abrirGaleria()
