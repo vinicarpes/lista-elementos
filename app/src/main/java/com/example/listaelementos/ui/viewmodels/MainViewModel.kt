@@ -11,12 +11,10 @@ import com.example.listaelementos.repositories.ProdutoRepository
 import com.example.listaelementos.repositories.toProduto
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.text.NumberFormat
 import java.util.Locale
 
-class MainViewModel(context: Context) : ViewModel() {
-    val repository = ProdutoRepository(context.database.produtoDao())
+class MainViewModel(private val repository: ProdutoRepository) : ViewModel() {
     private val _produtos = MutableLiveData<List<Produto>>()
     val produtos : LiveData<List<Produto>> = _produtos
 
