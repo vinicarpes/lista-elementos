@@ -4,27 +4,18 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
-import com.example.listaelementos.R
-import com.example.listaelementos.database.database
 import com.example.listaelementos.databinding.ActivityCadastroBinding
 import com.example.listaelementos.domain.models.Produto
-import com.example.listaelementos.utils.produtosGlobal
-import com.example.listaelementos.repositories.ProdutoRepository
 import com.example.listaelementos.ui.viewmodels.CadastroViewModel
-import com.example.listaelementos.ui.viewmodels.MainViewModel
-import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class CadastroActivity : AppCompatActivity() {
     val COD_IMAGE = 101
     var imageBitMap: Bitmap? = null
 
-    private lateinit var viewModel: CadastroViewModel
+    private val viewModel : CadastroViewModel by viewModel<CadastroViewModel>()
 
     private lateinit var binding: ActivityCadastroBinding
 
@@ -33,8 +24,6 @@ class CadastroActivity : AppCompatActivity() {
         binding = ActivityCadastroBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-
-        viewModel = CadastroViewModel(this.application)
 
         viewModel.saveSuccessEvent.observe(this) { succes ->
             if(succes){

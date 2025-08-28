@@ -17,8 +17,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class CadastroViewModel(application: Application) : AndroidViewModel(application) {
-    val repository = ProdutoRepository(application.database.produtoDao())
+class CadastroViewModel(private val repository: ProdutoRepository) : ViewModel() {
 
     private val _toastMessage = MutableLiveData<String?>()
     val toastMessage: LiveData<String?> = _toastMessage // essa variável pode ser acessada pela activity
