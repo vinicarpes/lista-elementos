@@ -9,4 +9,10 @@ data class Produto(
     val quantidade : Int,
     @Ignore val foto: Bitmap? = null,
     var id: Int = 0
-    )
+    ){
+
+
+    fun validaProduto() : Boolean {
+        return valor > 0 && quantidade > 0 && nome.isNotEmpty()
+    }
+}

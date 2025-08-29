@@ -37,7 +37,7 @@ class CadastroViewModel(private val repository: ProdutoRepository) : ViewModel()
     }
 
     fun valiadateToSaveProduct(p: Produto){
-        if (checkFields(p.nome, p.valor.toString(), p.quantidade.toString())) {
+        if (checkFields(p.nome, p.valor.toString(), p.quantidade.toString()) && p.validaProduto()) {
             save(p)
         } else {
             _toastMessage.value = "Preencha todos os campos corretamente"
