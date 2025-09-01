@@ -10,15 +10,25 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
+import org.junit.Before
 import org.junit.Test
 
 
 class ProdutoRepositoryTest {
+
+    private lateinit var dao :ProdutoDao
+    private lateinit var repository : ProdutoRepository
+
+    @Before
+    fun setUp(){
+        dao = mockk<ProdutoDao>()
+        repository = ProdutoRepository(dao)
+    }
+
+
     @Test
     fun deveChamarDaoQuandoSalvarProduto() = runTest {
         // arrange
-        val dao = mockk<ProdutoDao>()
-        val repository = ProdutoRepository(dao)
         val produto = Produto("Arroz", 10.0, 56, null)
         val produtoEntity = produto.toEntity()
 
@@ -34,9 +44,6 @@ class ProdutoRepositoryTest {
 
     @Test
     fun deveChamarDaoQuandoBuscarProdutos() = runTest {
-        val dao = mockk<ProdutoDao>()
-        val repository = ProdutoRepository(dao)
-
         coEvery {
             dao.getAll()
         }.returns(listOf())

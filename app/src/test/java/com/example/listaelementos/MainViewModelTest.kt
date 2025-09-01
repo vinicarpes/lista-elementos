@@ -10,14 +10,22 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import io.mockk.verify
+import org.junit.Before
 import org.junit.Test
 
 class MainViewModelTest {
 
+    private lateinit var repository : ProdutoRepository
+    private lateinit var viewModel : MainViewModel
+
+    @Before
+    fun setup(){
+        repository = mockk<ProdutoRepository>()
+        viewModel = MainViewModel(repository)
+    }
+
     @Test
     fun deveCalcularTotalCorretamenteERetornarEmStringQuandoUpdateTotalForChamado() {
-        val repository = mockk<ProdutoRepository>()
-        val viewModel = MainViewModel(repository)
         val produtos = listOf<Produto>()
 
         assert(viewModel.updateTotal(produtos) == "R\$ 0,00")
