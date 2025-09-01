@@ -4,6 +4,7 @@ import com.example.listaelementos.database.dao.ProdutoDao
 import com.example.listaelementos.domain.models.Produto
 import com.example.listaelementos.repositories.ProdutoRepository
 import com.example.listaelementos.repositories.toEntity
+import io.mockk.MockK
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -21,7 +22,7 @@ class ProdutoRepositoryTest {
         val produto = Produto("Arroz", 10.0, 56, null)
         val produtoEntity = produto.toEntity()
 
-        coEvery  {
+        coEvery {
             dao.insert(produtoEntity)
         }.returns(Unit)
 
@@ -31,4 +32,20 @@ class ProdutoRepositoryTest {
         coVerify { dao.insert(produtoEntity) }
     }
 
+    @Test
+    fun deveChamarDaoQuandoBuscarProdutos() = runTest {
+        val dao = mockk<ProdutoDao>()
+        val repository = ProdutoRepository(dao)
+
+        coEvery {
+            dao.getAll()
+        }.returns(listOf())
+
+        repository.produtos
+
+        coVerify {
+            dao.getAll()
+        }
+
+    }
 }
