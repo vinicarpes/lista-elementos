@@ -4,27 +4,17 @@ import com.example.listaelementos.database.dao.ProdutoDao
 import com.example.listaelementos.domain.models.Produto
 import com.example.listaelementos.repositories.ProdutoRepository
 import com.example.listaelementos.repositories.toEntity
-import io.mockk.MockK
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-import org.junit.Before
 import org.junit.Test
 
 
 class ProdutoRepositoryTest {
 
-    private lateinit var dao :ProdutoDao
-    private lateinit var repository : ProdutoRepository
-
-    @Before
-    fun setUp(){
-        dao = mockk<ProdutoDao>()
-        repository = ProdutoRepository(dao)
-    }
-
+    private val dao = mockk<ProdutoDao>()
+    private val repository = ProdutoRepository(dao)
 
     @Test
     fun deveChamarDaoQuandoSalvarProduto() = runTest {

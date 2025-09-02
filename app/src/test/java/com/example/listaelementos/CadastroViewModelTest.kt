@@ -6,20 +6,13 @@ import com.example.listaelementos.ui.viewmodels.CadastroViewModel
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
-import org.junit.Before
 import org.junit.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class CadastroViewModelTest {
-    private lateinit var repo: ProdutoRepository
-    private lateinit var viewModel : CadastroViewModel
-
-    @Before
-    fun setUp() {
-        repo = mockk<ProdutoRepository>()
-        viewModel = CadastroViewModel(repo)
-    }
+    private val repo = mockk<ProdutoRepository>()
+    private val viewModel = CadastroViewModel(repo)
 
     @Test
     fun deveChamarSaveDoRepoQuandoForSalvar() {
