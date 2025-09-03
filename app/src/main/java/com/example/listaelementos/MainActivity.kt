@@ -4,10 +4,10 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.listaelementos.databinding.ActivityMainBinding
-import com.example.listaelementos.domain.models.Produto
 import com.example.listaelementos.ui.activities.CadastroActivity
 import com.example.listaelementos.ui.adapters.ProdutoAdapter
 import com.example.listaelementos.ui.viewmodels.MainViewModel
+import com.example.listaelementos.ui.viewmodels.ProdutoState
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity() {
@@ -24,10 +24,6 @@ class MainActivity : AppCompatActivity() {
         val produtosAdapter = ProdutoAdapter(
             context = this
         )
-        viewModel.produtos.observe(this) { produtos ->
-            produtosAdapter.setList(produtos)
-            binding.txtTotal.text = "TOTAL: ${viewModel.updateTotal(produtos)}"
-        }
         viewModel.getProdutos()
 
         binding.apply {
@@ -38,6 +34,22 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
             }
         }
+
+        viewModel.state.observe(this) { state ->
+            when (state) {
+                is ProdutoState.Loading -> {
+                    binding.txtTotal.text = ""
+                }
+                is ProdutoState.Success -> {
+                    produtosAdapter.setList(state.produtos)
+                    binding.txtTotal.text = "TOTAL: ${viewModel.updateTotal(state.produtos)}"
+                }
+                is ProdutoState.Error -> {
+                    binding.txtTotal.text = state.message
+                }
+            }
+        }
+
 
     }
 

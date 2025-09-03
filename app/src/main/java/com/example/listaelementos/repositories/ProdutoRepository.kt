@@ -1,9 +1,9 @@
 package com.example.listaelementos.repositories
 
-import com.example.listaelementos.utils.bitmapToByteArray
 import com.example.listaelementos.database.dao.ProdutoDao
 import com.example.listaelementos.database.entities.ProdutoEntity
 import com.example.listaelementos.domain.models.Produto
+import com.example.listaelementos.utils.bitmapToByteArray
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 
@@ -12,8 +12,16 @@ class ProdutoRepository (
  {
     val produtos get() = dao.getAll()
 
-    suspend fun save(prod: Produto) = withContext(IO) {
-        dao.insert(prod.toEntity())
+     suspend fun getAll() : Result<List<ProdutoEntity>> = withContext(IO) {
+         runCatching {
+             dao.getAll()
+         }
+     }
+
+    suspend fun save(prod: Produto) : Result<Unit> = withContext(IO) {
+        runCatching {
+            dao.insert(prod.toEntity())
+        }
     }
 
 }
