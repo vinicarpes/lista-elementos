@@ -18,7 +18,7 @@ class CadastroViewModelTest {
     fun deveChamarSaveDoRepoQuandoForSalvar() {
         val p = Produto("arroz", 10.0, 10, null)
 
-        coEvery{ repo.save(p)}.returns(Unit)
+        coEvery{ repo.save(p)}.returns(Result.success(Unit))
 
         viewModel.save(p)
 
@@ -43,8 +43,7 @@ class CadastroViewModelTest {
     fun deveChamarSaveDoRepoQuandoVerificarProdutoValido() {
         val p = Produto("arroz", 10.0, 10, null)
 
-        coEvery { repo.save(p) } returns Unit
-
+        coEvery { repo.save(p) }.returns(Result.success(Unit))
         viewModel.valiadateToSaveProduct(p)
 
         coVerify { repo.save(p) }
