@@ -18,7 +18,6 @@ class ProdutoRepositoryTest {
 
     @Test
     fun deveChamarDaoQuandoSalvarProduto() = runTest {
-        // arrange
         val produto = Produto("Arroz", 10.0, 56, null)
         val produtoEntity = produto.toEntity()
 
@@ -26,9 +25,8 @@ class ProdutoRepositoryTest {
             dao.insert(produtoEntity)
         }.returns(Unit)
 
-        // act
         repository.save(produto)
-        // assert
+
         coVerify { dao.insert(produtoEntity) }
     }
 

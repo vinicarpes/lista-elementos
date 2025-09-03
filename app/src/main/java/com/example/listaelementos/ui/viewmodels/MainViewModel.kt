@@ -13,9 +13,6 @@ import java.text.NumberFormat
 import java.util.Locale
 
 class MainViewModel(private val repository: ProdutoRepository) : ViewModel() {
-//    private val _produtos = MutableLiveData<List<Produto>>()
-//    val produtos : LiveData<List<Produto>> = _produtos
-
     private val _state = MutableLiveData<ProdutoState>()
     val state: LiveData<ProdutoState> = _state
 

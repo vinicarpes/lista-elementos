@@ -47,7 +47,7 @@ class CadastroActivity : AppCompatActivity() {
 
                 try{
                     viewModel.valiadateToSaveProduct(Produto(nome, valor.toDouble(), qtd.toInt(), imageBitMap))
-                } catch (e: RuntimeException){ // excecao generica, apenas para fins didaticos
+                } catch (e: RuntimeException){
                     Toast.makeText(this@CadastroActivity, "Preencha todos os campos corretamente", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -64,11 +64,8 @@ class CadastroActivity : AppCompatActivity() {
 
         if (requestCode == COD_IMAGE && resultCode == RESULT_OK) {
             if (data != null) {
-                //lendo a uri da imagem selecionada
                 val inputStream = contentResolver.openInputStream(data.data!!)
-                //transformando o resultado em bitmap
                 imageBitMap = BitmapFactory.decodeStream(inputStream)
-                //exibindo a imagem na tela
                 binding.imgFotoProduto.setImageBitmap(imageBitMap)
             }
         }
