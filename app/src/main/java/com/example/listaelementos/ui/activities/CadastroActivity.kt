@@ -25,17 +25,17 @@ class CadastroActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
 
-        viewModel.saveSuccessEvent.observe(this) { succes ->
+        viewModel.salvoComSucesso.observe(this) { succes ->
             if(succes){
                 Toast.makeText(this, "Produto inserido com sucesso", Toast.LENGTH_SHORT).show()
                 finish()
             }
         }
 
-        viewModel.toastMessage.observe(this) { message ->
+        viewModel.mensagemToast.observe(this) { message ->
             message?.let{
                 Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
-                viewModel.onToastShown()
+                viewModel.aoExibirToast()
             }
         }
 
@@ -46,7 +46,7 @@ class CadastroActivity : AppCompatActivity() {
                 val qtd = txtQuantidade.text.toString()
 
                 try{
-                    viewModel.valiadateToSaveProduct(Produto(nome, valor.toDouble(), qtd.toInt(), imageBitMap))
+                    viewModel.valiadaParaSalvarProduct(Produto(nome, valor.toDouble(), qtd.toInt(), imageBitMap))
                 } catch (e: RuntimeException){
                     Toast.makeText(this@CadastroActivity, "Preencha todos os campos corretamente", Toast.LENGTH_SHORT).show()
                 }

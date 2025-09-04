@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 is ProdutoState.Success -> {
                     produtosAdapter.setList(state.produtos)
-                    binding.txtTotal.text = "TOTAL: ${viewModel.updateTotal(state.produtos)}"
+                    binding.txtTotal.text = "TOTAL: ${viewModel.atualizarValorTotal(state.produtos)}"
                 }
                 is ProdutoState.Error -> {
                     binding.txtTotal.text = state.message

@@ -11,38 +11,40 @@ import kotlinx.coroutines.launch
 
 class CadastroViewModel(private val repository: ProdutoRepository) : ViewModel() {
 
-    private val _toastMessage = MutableLiveData<String?>()
-    val toastMessage: LiveData<String?> = _toastMessage // essa variável pode ser acessada pela activity
+    private val _mensagemToast = MutableLiveData<String?>()
+    val mensagemToast: LiveData<String?> =
+        _mensagemToast
 
-    private val _saveSuccessEvent = MutableLiveData<Boolean>()
-    val saveSuccessEvent: LiveData<Boolean> = _saveSuccessEvent
+    private val _salvoComSucesso = MutableLiveData<Boolean>()
+    val salvoComSucesso: LiveData<Boolean> = _salvoComSucesso
 
-    fun save(prod: Produto) {
+    fun salvar(prod: Produto) {
         viewModelScope.launch(Dispatchers.IO) {
-            val result = repository.save(prod)
-            result.onSuccess {
-                _saveSuccessEvent.postValue(true)
+            val resultado = repository.salvar(prod)
+            resultado.onSuccess {
+                _salvoComSucesso.postValue(true)
             }.onFailure {
-                _toastMessage.postValue("Erro ao salvar o produto")
+                _mensagemToast.postValue("Erro ao salvar o produto")
             }
 
         }
     }
 
-    fun checkFields(nome: String, valor: String, qtd: String): Boolean {
+    fun verificaCampos(nome: String, valor: String, qtd: String): Boolean {
         return nome.isNotEmpty() && valor.isNotEmpty() && qtd.isNotEmpty()
     }
 
-    fun valiadateToSaveProduct(p: Produto){
-        if (checkFields(p.nome, p.valor.toString(), p.quantidade.toString()) && p.validaProduto()) {
-            save(p)
+    fun valiadaParaSalvarProduct(p: Produto){
+        val camposPreenchidosCorretamente = verificaCampos(p.nome, p.valor.toString(), p.quantidade.toString()) && p.validaProduto()
+        if (camposPreenchidosCorretamente) {
+            salvar(p)
         } else {
-            _toastMessage.value = "Preencha todos os campos corretamente"
+            _mensagemToast.value = "Preencha todos os campos corretamente"
         }
     }
 
-    fun onToastShown() {
-        _toastMessage.value = null
+    fun aoExibirToast() {
+        _mensagemToast.value = null
 
     }
 

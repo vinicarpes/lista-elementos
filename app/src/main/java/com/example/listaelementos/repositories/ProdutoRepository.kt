@@ -10,30 +10,30 @@ import kotlinx.coroutines.withContext
 class ProdutoRepository (
     private val dao: ProdutoDao)
  {
-    val produtos get() = dao.getAll()
+    val produtos get() = dao.buscarProdutos()
 
-     suspend fun getAll() : Result<List<ProdutoEntity>> = withContext(IO) {
+     suspend fun buscarProdutos() : Result<List<ProdutoEntity>> = withContext(IO) {
          runCatching {
-             dao.getAll()
+             dao.buscarProdutos()
          }
      }
 
-    suspend fun save(prod: Produto) : Result<Unit> = withContext(IO) {
+    suspend fun salvar(prod: Produto) : Result<Unit> = withContext(IO) {
         runCatching {
-            dao.insert(prod.toEntity())
+            dao.inserir(prod.paraEntidade())
         }
     }
 
 }
 
-fun Produto.toEntity() = ProdutoEntity(
+fun Produto.paraEntidade() = ProdutoEntity(
     nome = this.nome,
     valor = this.valor,
     quantidade = this.quantidade,
     foto = this.foto?.let { bitmapToByteArray(it) }
 )
 
-fun ProdutoEntity.toProduto() = Produto(
+fun ProdutoEntity.paraProduto() = Produto(
     id = this.id,
     nome = this.nome,
     valor = this.valor,

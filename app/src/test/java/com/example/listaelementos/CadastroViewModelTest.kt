@@ -18,14 +18,14 @@ class CadastroViewModelTest {
     private val viewModel = CadastroViewModel(repo)
 
     @Test
-    fun deveChamarSaveDoRepoQuandoForSalvar() = runTest {
+    fun `deve chamar metodo salvar do repositorio e atualizar o livedata quando salvar um produto valido`() = runTest {
         val p = Produto("arroz", 10.0, 10, null)
 
-        coEvery { repo.save(p) }.returns(Result.success(Unit))
+        coEvery { repo.salvar(p) }.returns(Result.success(Unit))
 
         viewModel.salvar(p)
 
-        coVerify { repo.save(p) }
+        coVerify { repo.salvar(p) }
 
         val produtoFoiSalvo = viewModel.salvoComSucesso.getOrAwaitValue()
 
@@ -41,7 +41,7 @@ class CadastroViewModelTest {
     }
 
     @Test
-    fun deveRetornarTrueQuandoReceberCamposNaoVaziosEmCheckFields() {
+    fun `deve retornar true quando receber campos nao vazios no metodo verificaCampos`() {
         val p = Produto("arroz", 10.0, 10, null)
         val camposPreenchidosCorretamente = viewModel.verificaCampos(p.nome, p.valor.toString(), p.quantidade.toString())
 
@@ -49,13 +49,13 @@ class CadastroViewModelTest {
     }
 
     @Test
-    fun deveChamarSaveDoRepoQuandoVerificarProdutoValido() {
+    fun `deve chamar metodo salvar do repo quando verificar produto valido`() {
         val p = Produto("arroz", 10.0, 10, null)
 
-        coEvery { repo.save(p) }.returns(Result.success(Unit))
+        coEvery { repo.salvar(p) }.returns(Result.success(Unit))
         viewModel.valiadaParaSalvarProduct(p)
 
-        coVerify { repo.save(p) }
+        coVerify { repo.salvar(p) }
     }
 }
 

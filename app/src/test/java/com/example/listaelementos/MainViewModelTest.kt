@@ -13,10 +13,11 @@ class MainViewModelTest {
     private val viewModel = MainViewModel(repository)
 
     @Test
-    fun deveCalcularTotalCorretamenteERetornarEmStringQuandoUpdateTotalForChamado() {
-        val produtos = listOf<Produto>()
+    fun `deve calcular total corretamente e retornar em String quando atualizarValorTotal for chamado`() {
+        val produtos = emptyList<Produto>()
+        val totalCalculado = viewModel.atualizarValorTotal(produtos)
 
-        viewModel.updateTotal(produtos) shouldBe "R$\u00A00,00"
+        totalCalculado shouldBe "R$\u00A00,00"
     }
 
 }

@@ -3,7 +3,7 @@ package com.example.listaelementos
 import com.example.listaelementos.database.dao.ProdutoDao
 import com.example.listaelementos.domain.models.Produto
 import com.example.listaelementos.repositories.ProdutoRepository
-import com.example.listaelementos.repositories.toEntity
+import com.example.listaelementos.repositories.paraEntidade
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -14,32 +14,32 @@ import org.junit.Test
 class ProdutoRepositoryTest {
 
     private val dao = mockk<ProdutoDao>()
-    private val repository = ProdutoRepository(dao)
+    private val repo = ProdutoRepository(dao)
 
     @Test
-    fun deveChamarDaoQuandoSalvarProduto() = runTest {
+    fun `deve chamar dao quando salvar produto`() = runTest {
         val produto = Produto("Arroz", 10.0, 56, null)
-        val produtoEntity = produto.toEntity()
+        val produtoEntity = produto.paraEntidade()
 
         coEvery {
-            dao.insert(produtoEntity)
+            dao.inserir(produtoEntity)
         }.returns(Unit)
 
-        repository.save(produto)
+        repo.salvar(produto)
 
-        coVerify { dao.insert(produtoEntity) }
+        coVerify(exactly = 1) { dao.inserir(produtoEntity) }
     }
 
     @Test
-    fun deveChamarDaoQuandoBuscarProdutos() = runTest {
+    fun `deve chamar dao quando buscar produtos`() = runTest {
         coEvery {
-            dao.getAll()
+            dao.buscarProdutos()
         }.returns(listOf())
 
-        repository.produtos
+        repo.produtos
 
         coVerify {
-            dao.getAll()
+            dao.buscarProdutos()
         }
 
     }
