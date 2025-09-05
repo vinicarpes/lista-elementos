@@ -48,4 +48,8 @@ data class ProdutoEntity(
         result = 31 * result + (foto?.contentHashCode() ?: 0)
         return result
     }
+
+    fun validaEntity() : Boolean{
+        return valor > 0 && quantidade > 0 && nome.isNotEmpty()
+    }
 }

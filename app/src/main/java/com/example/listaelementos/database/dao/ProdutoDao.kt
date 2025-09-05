@@ -10,14 +10,14 @@ import com.example.listaelementos.database.entities.ProdutoEntity
 @Dao
 interface ProdutoDao {
     @Query("SELECT * FROM ProdutoEntity")
-    fun getAll(): List<ProdutoEntity>
+    fun buscarProdutos(): List<ProdutoEntity>
 
     @Insert
     fun insertAll(vararg produtos: ProdutoEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(produto: ProdutoEntity)
+    fun inserir(produto: ProdutoEntity)
 
     @Delete
-    fun delete(produto: ProdutoEntity)
+    fun deletar(produto: ProdutoEntity)
 }
