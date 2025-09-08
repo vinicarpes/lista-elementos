@@ -1,10 +1,9 @@
-package com.example.listaelementos
+package com.example.listaelementos.ui.activities
 
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.listaelementos.databinding.ActivityMainBinding
-import com.example.listaelementos.ui.activities.CadastroActivity
 import com.example.listaelementos.ui.adapters.ProdutoAdapter
 import com.example.listaelementos.ui.viewmodels.MainViewModel
 import com.example.listaelementos.ui.viewmodels.ProdutoState
