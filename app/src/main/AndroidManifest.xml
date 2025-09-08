@@ -14,10 +14,24 @@
         android:name=".ListaElementosApplication">
         <activity
             android:name=".ui.activities.CadastroActivity"
-            android:exported="false">
+            android:exported="true">
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="myapp"
+                    android:host="listaelementos.com" />
+
+                <data android:scheme="myapp"
+                    android:host="www.listaelementos.com" />
+            </intent-filter>
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.activities.MainActivity"/>
+                android:value=".ui.activities.MainActivity" />
+
         </activity>
 
         <activity
@@ -29,17 +43,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
-            <intent-filter android:autoVerify="false">
-                <action android:name="android.intent.action.VIEW" />
 
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data android:scheme="https"
-                    android:host="listaelementos.com" />
-                <data android:scheme="https"
-                    android:host="www.listaelementos.com" />
-            </intent-filter>
 
         </activity>
     </application>
