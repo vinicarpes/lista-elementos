@@ -86,9 +86,13 @@ class CadastroActivity : AppCompatActivity() {
         val appLinkIntent = intent
         val appLinkData = appLinkIntent.data
 
-        val nomeProduto = appLinkData?.getQueryParameter("produto") ?: ""
-        val valorProduto = appLinkData?.getQueryParameter("valor") ?: ""
-        val quantidadeProduto = appLinkData?.getQueryParameter("quantidade") ?: ""
+        val nomeProdutoDeepLink = "produto"
+        val valorProdutoDeepLink = "valor"
+        val quantidadeProdutoDeepLink = "quantidade"
+
+        val nomeProduto = appLinkData?.getQueryParameter(nomeProdutoDeepLink) ?: ""
+        val valorProduto = appLinkData?.getQueryParameter(valorProdutoDeepLink) ?: ""
+        val quantidadeProduto = appLinkData?.getQueryParameter(quantidadeProdutoDeepLink) ?: ""
 
         binding.apply {
             txtProduto.setText(nomeProduto)
