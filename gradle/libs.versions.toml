@@ -32,6 +32,7 @@ androidx-room-rxjava2 = { module = "androidx.room:room-rxjava2", version.ref = "
 androidx-room-rxjava3 = { module = "androidx.room:room-rxjava3", version.ref = "roomPaging" }
 androidx-room-testing = { module = "androidx.room:room-testing", version.ref = "roomPaging" }
 androidx-ui = { module = "androidx.compose.ui:ui" }
+androidx-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
 androidx-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
 insert-koin-koin-core = { module = "io.insert-koin:koin-core" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
