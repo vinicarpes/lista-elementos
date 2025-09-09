@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.compose.compiler)
     id("com.google.devtools.ksp")
 }
 
@@ -10,6 +11,7 @@ android {
 
     buildFeatures {
         viewBinding = true
+        compose = true
     }
 
     defaultConfig {
@@ -41,6 +43,9 @@ android {
 }
 
 dependencies {
+    val composeBom = platform("androidx.compose:compose-bom:2025.08.00")
+    implementation(composeBom)
+    androidTestImplementation(composeBom)
 
     implementation(libs.androidx.room.runtime)
     ksp(libs.androidx.room.compiler)
@@ -71,4 +76,9 @@ dependencies {
     testImplementation(libs.kotest.assertions.core)
     testImplementation(libs.kotest.runner.junit5.jvm)
     testImplementation(libs.androidx.arch.core.testing)
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.material3)
+    implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.androidx.foundation)
+    implementation(libs.androidx.activity.compose)
 }
