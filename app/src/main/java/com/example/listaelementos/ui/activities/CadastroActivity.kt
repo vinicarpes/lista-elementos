@@ -15,7 +15,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class CadastroActivity : AppCompatActivity() {
     val COD_IMAGE = 101
     var imageBitMap: Bitmap? = null
-
     val nomeProdutoDeepLink = "produto"
     val valorProdutoDeepLink = "valor"
     val quantidadeProdutoDeepLink = "quantidade"
@@ -89,6 +88,7 @@ class CadastroActivity : AppCompatActivity() {
     private fun getDeepLink(){
         val appLinkIntent = intent
         val appLinkData = appLinkIntent.data
+
 
         val nomeProduto = appLinkData?.getQueryParameter(nomeProdutoDeepLink) ?: ""
         val valorProduto = appLinkData?.getQueryParameter(valorProdutoDeepLink) ?: ""
