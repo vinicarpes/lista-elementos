@@ -15,11 +15,13 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class CadastroActivity : AppCompatActivity() {
     val COD_IMAGE = 101
     var imageBitMap: Bitmap? = null
-    val nomeProdutoDeepLink = "produto"
-    val valorProdutoDeepLink = "valor"
-    val quantidadeProdutoDeepLink = "quantidade"
-
     private val viewModel : CadastroViewModel by viewModel<CadastroViewModel>()
+
+    companion object {
+        const val NOME_PRODUTO_DEEP_LINK = "produto"
+        const val VALOR_PRODUTO_DEEP_LINK = "valor"
+        const val QUANTIDADE_PRODUTO_DEEP_LINK = "quantidade"
+    }
 
     private lateinit var binding: ActivityCadastroBinding
 
@@ -90,9 +92,9 @@ class CadastroActivity : AppCompatActivity() {
         val appLinkData = appLinkIntent.data
 
 
-        val nomeProduto = appLinkData?.getQueryParameter(nomeProdutoDeepLink) ?: ""
-        val valorProduto = appLinkData?.getQueryParameter(valorProdutoDeepLink) ?: ""
-        val quantidadeProduto = appLinkData?.getQueryParameter(quantidadeProdutoDeepLink) ?: ""
+        val nomeProduto = appLinkData?.getQueryParameter(NOME_PRODUTO_DEEP_LINK) ?: ""
+        val valorProduto = appLinkData?.getQueryParameter(VALOR_PRODUTO_DEEP_LINK) ?: ""
+        val quantidadeProduto = appLinkData?.getQueryParameter(QUANTIDADE_PRODUTO_DEEP_LINK) ?: ""
 
         binding.apply {
             txtProduto.setText(nomeProduto)
