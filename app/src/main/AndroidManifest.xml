@@ -34,6 +34,21 @@
         <activity
             android:name=".ui.activities.MainActivity"
             android:exported="true">
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="myapp"
+                    android:host="listaelementos" />
+            </intent-filter>
+
+        </activity>
+        <activity
+            android:name=".ui.activities.MainComposeActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -47,7 +62,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data android:scheme="myapp"
-                    android:host="listaelementos" />
+                    android:host="maincompose" />
             </intent-filter>
 
         </activity>
