@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.listaelementos.domain.models.Produto
 import com.example.listaelementos.repositories.ProdutoRepository
 import com.example.listaelementos.repositories.paraProduto
-import com.example.listaelementos.ui.activities.ValorDaCompra
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -20,21 +19,15 @@ class MainComposeViewModel(private val repository: ProdutoRepository) : ViewMode
     private val _state = MutableStateFlow(ProdutoComposeState())
     val state = _state.asStateFlow()
 
-    private val _valorTotal = MutableStateFlow(ValorTotalProdutoState())
-
-    val valorTotal = _valorTotal.asStateFlow()
-
     fun getProdutos(){
         viewModelScope.launch(Dispatchers.IO) {
             _state.update{ it.copy() }
             val result = repository.buscarProdutos()
             result.onSuccess { entidades ->
                 val produtos = entidades.map { entidade -> entidade.paraProduto() }
-                _state.update { it.copy(produtos = produtos) }
-                _valorTotal.update { it.copy(valorTotal = atualizarValorTotal(produtos)) }
+                _state.update { it.copy(produtos = produtos, valorTotal = atualizarValorTotal(produtos)) }
             }.onFailure { e->
                 _state.update { it.copy() }
-                _valorTotal.update { it.copy() }
             }
         }
     }
@@ -47,6 +40,6 @@ class MainComposeViewModel(private val repository: ProdutoRepository) : ViewMode
     }
 }
 
-data class ProdutoComposeState(val produtos: List<Produto> = emptyList())
-
-data class ValorTotalProdutoState(val valorTotal: String = "0.00")
+data class ProdutoComposeState(
+    val produtos: List<Produto> = emptyList(),
+    val valorTotal: String = "0.00")
