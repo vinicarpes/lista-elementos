@@ -31,6 +31,7 @@ class MainViewModel(private val repository: ProdutoRepository) : ViewModel() {
 
     fun atualizarValorTotal(produtos: List<Produto>) : String {
         val soma = produtos.sumOf { it.valor * it.quantidade }
+        require(soma >= 0)
         val f = NumberFormat.getCurrencyInstance(Locale("pt", "br"))
         return f.format(soma)
     }

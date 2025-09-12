@@ -4,6 +4,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.listaelementos.databinding.ActivityCadastroBinding
@@ -14,6 +15,9 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class CadastroActivity : AppCompatActivity() {
     val COD_IMAGE = 101
     var imageBitMap: Bitmap? = null
+    val nomeProdutoDeepLink = "produto"
+    val valorProdutoDeepLink = "valor"
+    val quantidadeProdutoDeepLink = "quantidade"
 
     private val viewModel : CadastroViewModel by viewModel<CadastroViewModel>()
 
@@ -24,6 +28,8 @@ class CadastroActivity : AppCompatActivity() {
         binding = ActivityCadastroBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
+
+        getDeepLink()
 
         viewModel.salvoComSucesso.observe(this) { succes ->
             if(succes){
@@ -71,11 +77,27 @@ class CadastroActivity : AppCompatActivity() {
         }
     }
 
-    fun abrirGaleria() {
+    private fun abrirGaleria() {
         val intent = Intent(Intent.ACTION_GET_CONTENT)
 
         intent.type = "image/*"
 
         startActivityForResult(Intent.createChooser(intent, "Selecione uma imagem"), COD_IMAGE)
+    }
+
+    private fun getDeepLink(){
+        val appLinkIntent = intent
+        val appLinkData = appLinkIntent.data
+
+
+        val nomeProduto = appLinkData?.getQueryParameter(nomeProdutoDeepLink) ?: ""
+        val valorProduto = appLinkData?.getQueryParameter(valorProdutoDeepLink) ?: ""
+        val quantidadeProduto = appLinkData?.getQueryParameter(quantidadeProdutoDeepLink) ?: ""
+
+        binding.apply {
+            txtProduto.setText(nomeProduto)
+            txtValor.setText(valorProduto)
+            txtQuantidade.setText(quantidadeProduto)
+        }
     }
 }
