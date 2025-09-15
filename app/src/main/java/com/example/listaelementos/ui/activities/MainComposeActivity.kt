@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -47,8 +48,6 @@ import androidx.compose.ui.unit.dp
 import com.example.listaelementos.R
 import com.example.listaelementos.domain.models.Produto
 import com.example.listaelementos.ui.theme.AppTheme
-import com.example.listaelementos.ui.theme.onPrimaryLight
-import com.example.listaelementos.ui.theme.primaryLight
 import com.example.listaelementos.ui.viewmodels.MainComposeViewModel
 import com.example.listaelementos.ui.viewmodels.ProdutoComposeState
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -62,7 +61,9 @@ class MainComposeActivity : AppCompatActivity() {
         setContent {
             val produtosState by viewModel.state.collectAsState()
             AppTheme {
-                ListaCompras(produtosState)
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    ListaCompras(produtosState, modifier = Modifier.padding(innerPadding))
+                }
             }
         }
     }
@@ -81,7 +82,6 @@ private fun Titulo(msg: String) {
             .fillMaxWidth()
             .padding(top = 40.dp),
         text = msg,
-        color = onPrimaryLight,
         fontWeight = FontWeight.Bold,
         textAlign = TextAlign.Center
     )
@@ -95,7 +95,7 @@ private fun ElementoLista(produto: Produto) {
         modifier = Modifier
             .padding(8.dp)
             .fillMaxWidth()
-            .border(border = BorderStroke(1.dp, primaryLight))
+            .border(border = BorderStroke(1.dp, Color.Gray))
     ) {
         Image(
             painter = painterResource(ic_menu_camera),
@@ -105,21 +105,21 @@ private fun ElementoLista(produto: Produto) {
                 .clip(CircleShape)
                 .width(40.dp)
         )
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(8.dp)) {
             Column {
                 Text(
                     text = produto.nome,
-                    color = primaryLight
                 )
             }
             Spacer(Modifier.weight(1f))
             Column(horizontalAlignment = Alignment.End) {
                 Text(
-                    text = "R$" + produto.valor.toString(),
-                    color = primaryLight)
+                    text = "R$" + produto.valor.toString()
+                )
                 Text(
                     text = "Quantidade: " + produto.quantidade.toString(),
-                    color = primaryLight
                 )
             }
         }
@@ -132,9 +132,6 @@ private fun BotaoAdicionarProduto(context: Context) {
         onClick = { context.startActivity(Intent(context, CadastroComposeActivity::class.java)) },
         contentPadding = PaddingValues(16.dp, 12.dp),
         shape = RoundedCornerShape(24.dp),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = primaryLight
-        ),
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
@@ -145,7 +142,7 @@ private fun BotaoAdicionarProduto(context: Context) {
 }
 
 @Composable
-private fun ListaCompras(state: ProdutoComposeState) {
+fun ListaCompras(state: ProdutoComposeState, modifier: Modifier) {
 
     LazyColumn {
         item {
@@ -172,8 +169,7 @@ private fun ValorDaCompra(valorTotal: String) {
         horizontalArrangement = Arrangement.Start
     ) {
         Text(
-            text = "TOTAL: $valorTotal",
-            color = primaryLight
+            text = "TOTAL: $valorTotal"
         )
     }
 }
@@ -205,10 +201,14 @@ private fun PreviewBotaoAdicionarProduto() {
 @Preview
 @Composable
 private fun PreviewListaCompras() {
-    ListaCompras(
-        state = ProdutoComposeState(
-            listOf(Produto("Arroz Parbolizado", 10.0, 2, null)),
-            valorTotal = "0.00"
-        )
-    )
+    AppTheme(darkTheme = true) {
+        Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+            ListaCompras(
+                state = ProdutoComposeState(
+                    listOf(Produto("Arroz Parbolizado", 10.0, 2, null)),
+                    valorTotal = "0.00"
+                ), modifier = Modifier.padding(innerPadding)
+            )
+        }
+    }
 }
