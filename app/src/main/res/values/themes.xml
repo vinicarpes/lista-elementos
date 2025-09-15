@@ -14,4 +14,7 @@
         <item name="android:windowLightStatusBar">true</item>
         <!-- Customize your theme here. -->
     </style>
+    <style name="Theme.ListaElementos.MainComposeAcitivity" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+
+    </style>
 </resources>
