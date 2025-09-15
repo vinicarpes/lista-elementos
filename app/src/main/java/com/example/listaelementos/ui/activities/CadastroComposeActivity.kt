@@ -1,7 +1,10 @@
 package com.example.listaelementos.ui.activities
 
 import android.R
+import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Image
@@ -16,11 +19,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -29,12 +34,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.listaelementos.repositories.ProdutoRepository
 import com.example.listaelementos.ui.theme.AppTheme
 import com.example.listaelementos.ui.viewmodels.CadastroComposeViewModel
+import com.example.listaelementos.ui.viewmodels.ProdutoFormState
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class CadastroComposeActivity : AppCompatActivity() {
@@ -43,44 +52,98 @@ class CadastroComposeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             AppTheme {
-                FormularioCadastroDeProduto()
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    FormularioCadastroDeProduto(
+                        modifier = Modifier.padding(innerPadding),
+                        viewModel = viewModel
+                    )
+                }
             }
         }
     }
 }
 
+
 @Composable
-private fun FormularioCadastroDeProduto() {
+private fun FormularioCadastroDeProduto(
+    modifier: Modifier,
+    viewModel: CadastroComposeViewModel
+) {
+    val state by viewModel.state.collectAsState()
     Column(modifier = Modifier.padding(top = 40.dp)) {
         TituloCadastro("Cadastro de Produto")
         IconeImagem()
-        CampoDeTextoFormulario("Nome do produto")
-        CampoDeTextoFormulario("Quantidade")
-        CampoDeTextoFormulario("R$0.00")
-        BotaoInserirProduto(onClickListener = {})
+        CamposDeTextoFormulario(
+            state = state,
+            aoAlterarNome = { novoNome ->
+                viewModel.aoMudarNome(novoNome)
+            },
+            aoAlterarQuantidade = { novaQuantidade ->
+                viewModel.aoMudarQuantidade(novaQuantidade)
+            },
+            aoAlterarValor = { novoValor ->
+                viewModel.aoMudarValor(novoValor)
+            }
+        )
+        BotaoInserirProduto(aoSalvar = {
+            viewModel.valiadaParaSalvarProduct(state.nome, state.valor, state.quantidade)
+        })
     }
 }
 
 @Composable
-private fun CampoDeTextoFormulario(campo: String) {
-    var valorPreenchido by rememberSaveable { mutableStateOf("") }
-    Row {
-
-        OutlinedTextField(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(12.dp),
-            placeholder = {
-                Text(
-                    text = campo,
-                    color = Color.Gray,
-                )
-            },
-            value = valorPreenchido,
-            onValueChange = { valorPreenchido = it },
-        )
-    }
+private fun CamposDeTextoFormulario(
+    state: ProdutoFormState,
+    aoAlterarNome: (String) -> Unit = {},
+    aoAlterarQuantidade : (String) -> Unit = {},
+    aoAlterarValor : (String) -> Unit = {}
+) {
+    OutlinedTextField(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(12.dp),
+        label = {
+            Text(
+                text = "Produto",
+            )
+        },
+        value = state.nome,
+        onValueChange = aoAlterarNome
+    )
+    OutlinedTextField(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(12.dp),
+        label = {
+            Text(
+                text = "Quantidade",
+            )
+        },
+        value = state.quantidade,
+        onValueChange = aoAlterarQuantidade,
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Number
+        ),
+        singleLine = true
+    )
+    OutlinedTextField(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(12.dp),
+        label = {
+            Text(
+                text = "R$0.00",
+            )
+        },
+        value = state.valor,
+        onValueChange = aoAlterarValor,
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Number
+        ),
+        singleLine = true
+    )
 }
+
 
 @Composable
 private fun IconeImagem() {
@@ -103,15 +166,17 @@ private fun IconeImagem() {
 }
 
 @Composable
-private fun BotaoInserirProduto(onClickListener: () -> Unit = {}) {
+private fun BotaoInserirProduto(aoSalvar: () -> Unit = {}) {
     Row {
         Button(
-            onClick = { },
+            onClick = {
+                aoSalvar()
+            },
             contentPadding = PaddingValues(16.dp, 12.dp),
             shape = RoundedCornerShape(24.dp),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(16.dp),
         ) {
             Text(text = "Inserir")
         }
@@ -137,8 +202,10 @@ private fun TituloCadastro(msg: String) {
 @Composable
 private fun PreviewFormularioCadastroDeProduto() {
     AppTheme(darkTheme = true) {
-        Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-            FormularioCadastroDeProduto()
-        }
+//        Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+//            FormularioCadastroDeProduto(
+//                modifier = Modifier.padding(innerPadding),
+//            )
+//        }
     }
 }
