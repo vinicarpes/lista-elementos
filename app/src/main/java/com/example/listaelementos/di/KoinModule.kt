@@ -1,8 +1,10 @@
 package com.example.listaelementos.di
 
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.room.Room
 import com.example.listaelementos.database.ListaComprasDatabase
 import com.example.listaelementos.repositories.ProdutoRepository
+import com.example.listaelementos.ui.viewmodels.CadastroComposeViewModel
 import com.example.listaelementos.ui.viewmodels.CadastroViewModel
 import com.example.listaelementos.ui.viewmodels.MainViewModel
 import com.example.listaelementos.ui.viewmodels.MainComposeViewModel
@@ -16,6 +18,7 @@ val appModule = module {
     viewModelOf(::MainViewModel)
     viewModelOf(::CadastroViewModel)
     viewModelOf(::MainComposeViewModel)
+    viewModelOf(::CadastroComposeViewModel)
     single {
         Room.databaseBuilder(
             androidContext(),
