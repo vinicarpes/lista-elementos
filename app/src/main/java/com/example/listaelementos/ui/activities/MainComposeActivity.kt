@@ -45,12 +45,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.listaelementos.R
+import com.example.listaelementos.database.dao.ProdutoDao
 import com.example.listaelementos.domain.models.Produto
+import com.example.listaelementos.repositories.ProdutoRepository
 import com.example.listaelementos.ui.theme.AppTheme
 import com.example.listaelementos.ui.viewmodels.MainComposeViewModel
 import com.example.listaelementos.ui.viewmodels.ProdutoComposeState
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import kotlin.getValue
 
 class MainComposeActivity : AppCompatActivity() {
     private val viewModel: MainComposeViewModel by viewModel<MainComposeViewModel>()
@@ -59,10 +63,9 @@ class MainComposeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            val produtosState by viewModel.state.collectAsState()
             AppTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    ListaCompras(produtosState, modifier = Modifier.padding(innerPadding))
+                    ListaCompras(viewModel = viewModel, modifier = Modifier.padding(innerPadding))
                 }
             }
         }
@@ -107,7 +110,8 @@ private fun ElementoLista(produto: Produto) {
         )
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(8.dp)) {
+            modifier = Modifier.padding(8.dp)
+        ) {
             Column {
                 Text(
                     text = produto.nome,
@@ -127,7 +131,8 @@ private fun ElementoLista(produto: Produto) {
 }
 
 @Composable
-private fun BotaoAdicionarProduto(context: Context) {
+private fun BotaoAdicionarProduto() {
+    val context = LocalContext.current
     Button(
         onClick = { context.startActivity(Intent(context, CadastroComposeActivity::class.java)) },
         contentPadding = PaddingValues(16.dp, 12.dp),
@@ -142,18 +147,33 @@ private fun BotaoAdicionarProduto(context: Context) {
 }
 
 @Composable
-fun ListaCompras(state: ProdutoComposeState, modifier: Modifier) {
+fun ListaCompras(viewModel: MainComposeViewModel, modifier: Modifier) {
+
+    val state by viewModel.state.collectAsState()
 
     LazyColumn {
         item {
             val titulo = stringResource(id = R.string.lista_compras)
             Titulo(titulo)
-            BotaoAdicionarProduto(LocalContext.current)
-            ValorDaCompra(state.valorTotal)
+            BotaoAdicionarProduto()
+            ValorDaCompra((state as ProdutoComposeState.Success).valorTotal)
         }
 
-        items(state.produtos) { produto ->
-            ElementoLista(produto)
+        when (state) {
+            is ProdutoComposeState.Loading -> {
+                item { Text("Carregando...") }
+            }
+
+            is ProdutoComposeState.Success -> {
+                items((state as ProdutoComposeState.Success).produtos) { produto ->
+                    ElementoLista(produto)
+                }
+            }
+
+            is ProdutoComposeState.Error -> {
+                val message = (state as ProdutoComposeState.Error).message
+                item { Text("Erro: $message") }
+            }
         }
     }
 }
@@ -177,7 +197,7 @@ private fun ValorDaCompra(valorTotal: String) {
 @Preview
 @Composable
 private fun PreviewValorDaCompra() {
-    ValorDaCompra(ProdutoComposeState().valorTotal)
+    ValorDaCompra("0.00")
 }
 
 @Preview
@@ -195,7 +215,7 @@ private fun PreviewTitulo() {
 @Preview
 @Composable
 private fun PreviewBotaoAdicionarProduto() {
-    BotaoAdicionarProduto(LocalContext.current)
+    BotaoAdicionarProduto()
 }
 
 @Preview
@@ -204,11 +224,8 @@ private fun PreviewListaCompras() {
     AppTheme(darkTheme = true) {
         Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
             ListaCompras(
-                state = ProdutoComposeState(
-                    listOf(Produto("Arroz Parbolizado", 10.0, 2, null)),
-                    valorTotal = "0.00"
-                ), modifier = Modifier.padding(innerPadding)
-            )
+                viewModel = viewModel(),
+                modifier = Modifier.padding(innerPadding))
         }
     }
 }

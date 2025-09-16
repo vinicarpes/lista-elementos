@@ -1,9 +1,9 @@
 package com.example.listaelementos.ui.viewmodels
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.listaelementos.R
 import com.example.listaelementos.domain.models.Produto
 import com.example.listaelementos.repositories.ProdutoRepository
 import com.example.listaelementos.repositories.paraProduto
@@ -21,18 +21,19 @@ class MainComposeViewModel(private val repository: ProdutoRepository) : ViewMode
 
     fun getProdutos(){
         viewModelScope.launch(Dispatchers.IO) {
-            _state.update{ it.copy() }
+            _state.update { ProdutoComposeState.Loading }
             val result = repository.buscarProdutos()
             result.onSuccess { entidades ->
                 val produtos = entidades.map { entidade -> entidade.paraProduto() }
-                _state.update { it.copy(produtos = produtos, valorTotal = atualizarValorTotal(produtos)) }
+                _state.update { ProdutoComposeState.Success(produtos,atualizarValorTotal(produtos)) }
             }.onFailure { e->
-                _state.update { it.copy() }
+                val mensagemErro = R.string.erro_buscar_produtos.toString()
+                _state.update { ProdutoComposeState.Error(e.message ?: mensagemErro) }
             }
         }
     }
 
-    fun atualizarValorTotal(produtos: List<Produto>) : String {
+    private fun atualizarValorTotal(produtos: List<Produto>) : String {
         val soma = produtos.sumOf { it.valor * it.quantidade }
         require(soma >= 0)
         val f = NumberFormat.getCurrencyInstance(Locale("pt", "br"))
@@ -40,6 +41,9 @@ class MainComposeViewModel(private val repository: ProdutoRepository) : ViewMode
     }
 }
 
-data class ProdutoComposeState(
-    val produtos: List<Produto> = emptyList(),
-    val valorTotal: String = "0.00")
+ open class ProdutoComposeState{
+    object Loading : ProdutoComposeState()
+    data class Success(val produtos: List<Produto>, val valorTotal: String = "0.00") : ProdutoComposeState()
+    data class Error(val message: String) : ProdutoComposeState()
+
+}
