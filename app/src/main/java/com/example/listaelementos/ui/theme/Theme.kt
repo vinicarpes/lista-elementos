@@ -138,33 +138,3 @@ private fun setUpEdgeToEdge(view: View, darkTheme: Boolean) {
     controller.isAppearanceLightStatusBars = !darkTheme
     controller.isAppearanceLightNavigationBars = !darkTheme
 }
-
-@Preview
-@Composable
-private fun PreviewAppThemeDark() {
-    AppTheme(true) {
-        Scaffold { innerPadding ->
-            ListaCompras(
-                state = ProdutoComposeState(
-                    listOf(Produto("Arroz Parbolizado", 10.0, 2, null)),
-                    valorTotal = "0.00"
-                ), modifier = Modifier.padding(innerPadding)
-            )
-        }
-    }
-}
-
-@Preview
-@Composable
-private fun PreviewAppThemeLight() {
-    AppTheme(false) {
-        Scaffold { innerPadding ->
-        ListaCompras(
-            state = ProdutoComposeState(
-                listOf(Produto("Arroz Parbolizado", 10.0, 2, null)),
-                valorTotal = "0.00"
-            ), modifier = Modifier.padding(innerPadding)
-        )
-    }
-}
-}
