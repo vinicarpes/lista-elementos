@@ -1,10 +1,10 @@
 package com.example.listaelementos.ui.activities
 
-import android.R
-import android.annotation.SuppressLint
 import android.os.Bundle
+import android.R.drawable.ic_menu_camera
 import android.util.Log
 import android.widget.Toast
+import com.example.listaelementos.R.string
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Image
@@ -27,20 +27,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.listaelementos.repositories.ProdutoRepository
 import com.example.listaelementos.ui.theme.AppTheme
 import com.example.listaelementos.ui.viewmodels.CadastroComposeViewModel
 import com.example.listaelementos.ui.viewmodels.ProdutoFormState
@@ -55,7 +51,10 @@ class CadastroComposeActivity : AppCompatActivity() {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     FormularioCadastroDeProduto(
                         modifier = Modifier.padding(innerPadding),
-                        viewModel = viewModel
+                        viewModel = viewModel,
+                        aoSalvarComSucesso = {
+                            finish()
+                        }
                     )
                 }
             }
@@ -67,11 +66,14 @@ class CadastroComposeActivity : AppCompatActivity() {
 @Composable
 private fun FormularioCadastroDeProduto(
     modifier: Modifier,
-    viewModel: CadastroComposeViewModel
+    viewModel: CadastroComposeViewModel,
+    aoSalvarComSucesso: () -> Unit
 ) {
     val state by viewModel.state.collectAsState()
+    val context = LocalContext.current
     Column(modifier = Modifier.padding(top = 40.dp)) {
-        TituloCadastro("Cadastro de Produto")
+        val titulo = stringResource(id = string.lista_compras)
+        TituloCadastro(titulo)
         IconeImagem()
         CamposDeTextoFormulario(
             state = state,
@@ -86,7 +88,14 @@ private fun FormularioCadastroDeProduto(
             }
         )
         BotaoInserirProduto(aoSalvar = {
-            viewModel.valiadaParaSalvarProduct(state.nome, state.valor, state.quantidade)
+            try{
+                viewModel.valiadaParaSalvarProduct(state.nome, state.valor, state.quantidade)
+                aoSalvarComSucesso()
+            }
+            catch (e: IllegalArgumentException){
+                Log.e("CadastroProduto", "Erro de validação: ${e.message}", e)
+                Toast.makeText(context, "Preencha todos os campos corretamente", Toast.LENGTH_SHORT).show()
+            }
         })
     }
 }
@@ -98,13 +107,16 @@ private fun CamposDeTextoFormulario(
     aoAlterarQuantidade : (String) -> Unit = {},
     aoAlterarValor : (String) -> Unit = {}
 ) {
+    val produtoPadrao = stringResource(id = string.Produto_padrao)
+    val valorPadrao = stringResource(id = string.valor_padrao)
+    val quantidadePadrao = stringResource(id = string.quantidade_padrao)
     OutlinedTextField(
         modifier = Modifier
             .fillMaxWidth()
             .padding(12.dp),
         label = {
             Text(
-                text = "Produto",
+                text = produtoPadrao,
             )
         },
         value = state.nome,
@@ -116,7 +128,7 @@ private fun CamposDeTextoFormulario(
             .padding(12.dp),
         label = {
             Text(
-                text = "Quantidade",
+                text = quantidadePadrao,
             )
         },
         value = state.quantidade,
@@ -132,7 +144,7 @@ private fun CamposDeTextoFormulario(
             .padding(12.dp),
         label = {
             Text(
-                text = "R$0.00",
+                text = valorPadrao,
             )
         },
         value = state.valor,
@@ -154,7 +166,7 @@ private fun IconeImagem() {
         horizontalArrangement = Arrangement.Center
     ) {
         Image(
-            painter = painterResource(R.drawable.ic_menu_camera),
+            painter = painterResource(ic_menu_camera),
             contentDescription = "Ícone de câmera",
             modifier = Modifier
                 .padding(start = 4.dp, end = 16.dp)
@@ -167,6 +179,7 @@ private fun IconeImagem() {
 
 @Composable
 private fun BotaoInserirProduto(aoSalvar: () -> Unit = {}) {
+    val textoBotao = stringResource(id = string.botao_inserir_produto)
     Row {
         Button(
             onClick = {
@@ -178,7 +191,7 @@ private fun BotaoInserirProduto(aoSalvar: () -> Unit = {}) {
                 .fillMaxWidth()
                 .padding(16.dp),
         ) {
-            Text(text = "Inserir")
+            Text(text = textoBotao)
         }
     }
 }

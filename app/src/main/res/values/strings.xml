@@ -3,4 +3,9 @@
     <string name="lista_compras">Lista de Compras</string>
     <string name="adicionar_produto">Adicionar produto</string>
     <string name="erro_buscar_produtos">Erro ao buscar produtos</string>
+    <string name="cadastro_produto">Cadastro de Produto</string>
+    <string name="quantidade_padrao">Quantidade</string>
+    <string name="valor_padrao">R$0.00</string>
+    <string name="Produto_padrao">Produto</string>
+    <string name="botao_inserir_produto">Inserir</string>
 </resources>
