@@ -35,6 +35,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.listaelementos.ui.theme.AppTheme
@@ -71,31 +72,22 @@ private fun FormularioCadastroDeProduto(
 ) {
     val state by viewModel.state.collectAsState()
     val context = LocalContext.current
-    Column(modifier = Modifier.padding(top = 40.dp)) {
+    Column(
+        modifier = Modifier.padding(top = 40.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
         val titulo = stringResource(id = string.lista_compras)
         TituloCadastro(titulo)
         IconeImagem()
         CamposDeTextoFormulario(
             state = state,
-            aoAlterarNome = { novoNome ->
-                viewModel.aoMudarNome(novoNome)
-            },
-            aoAlterarQuantidade = { novaQuantidade ->
-                viewModel.aoMudarQuantidade(novaQuantidade)
-            },
-            aoAlterarValor = { novoValor ->
-                viewModel.aoMudarValor(novoValor)
-            }
+            aoAlterarNome = viewModel::aoMudarNome,
+            aoAlterarQuantidade = viewModel::aoMudarQuantidade,
+            aoAlterarValor = viewModel::aoMudarValor
         )
         BotaoInserirProduto(aoSalvar = {
-            try{
-                viewModel.valiadaParaSalvarProduct(state.nome, state.valor, state.quantidade)
-                aoSalvarComSucesso()
-            }
-            catch (e: IllegalArgumentException){
-                Log.e("CadastroProduto", "Erro de validação: ${e.message}", e)
-                Toast.makeText(context, "Preencha todos os campos corretamente", Toast.LENGTH_SHORT).show()
-            }
+            viewModel.valiadaParaSalvarProduct(state.nome, state.valor, state.quantidade)
+            aoSalvarComSucesso()
         })
     }
 }
@@ -104,19 +96,16 @@ private fun FormularioCadastroDeProduto(
 private fun CamposDeTextoFormulario(
     state: ProdutoFormState,
     aoAlterarNome: (String) -> Unit = {},
-    aoAlterarQuantidade : (String) -> Unit = {},
-    aoAlterarValor : (String) -> Unit = {}
+    aoAlterarQuantidade: (String) -> Unit = {},
+    aoAlterarValor: (String) -> Unit = {}
 ) {
-    val produtoPadrao = stringResource(id = string.Produto_padrao)
-    val valorPadrao = stringResource(id = string.valor_padrao)
-    val quantidadePadrao = stringResource(id = string.quantidade_padrao)
     OutlinedTextField(
         modifier = Modifier
             .fillMaxWidth()
             .padding(12.dp),
         label = {
             Text(
-                text = produtoPadrao,
+                text = stringResource(id = string.Produto_padrao),
             )
         },
         value = state.nome,
@@ -128,7 +117,7 @@ private fun CamposDeTextoFormulario(
             .padding(12.dp),
         label = {
             Text(
-                text = quantidadePadrao,
+                text = stringResource(id = string.quantidade_padrao),
             )
         },
         value = state.quantidade,
@@ -144,7 +133,7 @@ private fun CamposDeTextoFormulario(
             .padding(12.dp),
         label = {
             Text(
-                text = valorPadrao,
+                text = stringResource(id = string.valor_padrao),
             )
         },
         value = state.valor,
@@ -159,66 +148,71 @@ private fun CamposDeTextoFormulario(
 
 @Composable
 private fun IconeImagem() {
-    Row(
+    Image(
+        painter = painterResource(ic_menu_camera),
+        contentDescription = "Ícone de câmera",
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 30.dp),
-        horizontalArrangement = Arrangement.Center
-    ) {
-        Image(
-            painter = painterResource(ic_menu_camera),
-            contentDescription = "Ícone de câmera",
-            modifier = Modifier
-                .padding(start = 4.dp, end = 16.dp)
-                .clip(CircleShape)
-                .width(100.dp)
-                .height(100.dp)
-        )
-    }
+            .padding(start = 4.dp, end = 16.dp, top = 30.dp)
+            .clip(CircleShape)
+            .width(100.dp)
+            .height(100.dp)
+            .fillMaxWidth(),
+        alignment = Alignment.Center
+    )
 }
+
 
 @Composable
 private fun BotaoInserirProduto(aoSalvar: () -> Unit = {}) {
     val textoBotao = stringResource(id = string.botao_inserir_produto)
-    Row {
-        Button(
-            onClick = {
-                aoSalvar()
-            },
-            contentPadding = PaddingValues(16.dp, 12.dp),
-            shape = RoundedCornerShape(24.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-        ) {
-            Text(text = textoBotao)
-        }
+    Button(
+        onClick = {
+            aoSalvar()
+        },
+        contentPadding = PaddingValues(16.dp, 12.dp),
+        shape = RoundedCornerShape(24.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+    ) {
+        Text(text = textoBotao)
     }
 }
 
+
 @Composable
 private fun TituloCadastro(msg: String) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = msg,
-            fontWeight = FontWeight.Bold
-        )
-    }
+    Text(
+        text = msg,
+        fontWeight = FontWeight.Bold,
+        modifier = Modifier.fillMaxWidth(),
+        textAlign = TextAlign.Center
+    )
 }
+
 
 @Preview
 @Composable
 private fun PreviewFormularioCadastroDeProduto() {
     AppTheme(darkTheme = true) {
-//        Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-//            FormularioCadastroDeProduto(
-//                modifier = Modifier.padding(innerPadding),
-//            )
-//        }
+        Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+            Column(
+                modifier = Modifier.padding(top = 40.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                val titulo = stringResource(id = string.lista_compras)
+                val state = ProdutoFormState()
+                TituloCadastro(titulo)
+                IconeImagem()
+                CamposDeTextoFormulario(
+                    state = state,
+                    aoAlterarNome = {},
+                    aoAlterarQuantidade = {},
+                    aoAlterarValor = {}
+                )
+                BotaoInserirProduto(aoSalvar = {
+                })
+            }
+        }
     }
 }

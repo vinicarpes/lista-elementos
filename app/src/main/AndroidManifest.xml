@@ -16,6 +16,17 @@
             android:name=".ui.activities.CadastroActivity"
             android:exported="true">
 
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="myapp"
+                    android:host="listaelementos.com/cadastroactivity" />
+
+            </intent-filter>
+
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.activities.CadastroActivity" />
@@ -25,6 +36,20 @@
             android:name=".ui.activities.MainActivity"
 
             android:exported="true">
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="myapp"
+                    android:host="listaelementos.com/mainactivity" />
+
+            </intent-filter>
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.activities.MainActivity" />
 
         </activity>
         <activity
