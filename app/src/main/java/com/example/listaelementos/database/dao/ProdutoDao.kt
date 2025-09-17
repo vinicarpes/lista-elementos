@@ -4,7 +4,9 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import com.example.listaelementos.database.entities.ProdutoEntity
+import com.example.listaelementos.domain.models.Produto
 
 @Dao
 interface ProdutoDao {
@@ -20,7 +22,7 @@ interface ProdutoDao {
     @Query("DELETE FROM ProdutoEntity WHERE id = :id")
     fun deletarPorId(id: Int)
 
-    @Query("UPDATE FROM ProdutoEntity WHERE id = :id")
-    fun atualizar(id: Int)
+    @Update
+    fun atualizar(produtoEntity: ProdutoEntity)
 
 }

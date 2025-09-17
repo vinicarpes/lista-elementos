@@ -137,3 +137,4 @@ private fun setUpEdgeToEdge(view: View, darkTheme: Boolean) {
     val controller = WindowCompat.getInsetsController(window, view)
     controller.isAppearanceLightStatusBars = !darkTheme
     controller.isAppearanceLightNavigationBars = !darkTheme
+}

@@ -29,6 +29,14 @@ class ProdutoRepository (
              dao.deletarPorId(produto.id)
          }
      }
+
+     suspend fun atualizar(produto: Produto, id: Int) : Result<Unit> = withContext(IO) {
+         runCatching {
+             val entidade = produto.paraEntidade()
+             entidade.id = id
+             dao.atualizar(entidade)
+         }
+     }
 }
 
 fun Produto.paraEntidade() = ProdutoEntity(

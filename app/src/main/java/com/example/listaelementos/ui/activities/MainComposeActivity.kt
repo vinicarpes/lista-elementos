@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -44,6 +45,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.listaelementos.R
 import com.example.listaelementos.domain.models.Produto
@@ -89,12 +91,19 @@ private fun Titulo(msg: String) {
 
 @Composable
 private fun ElementoLista(produto: Produto, aoRemoverProduto: (produto: Produto) -> Unit) {
+    val context = LocalContext.current
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .padding(8.dp)
             .fillMaxWidth()
             .border(border = BorderStroke(1.dp, Color.Gray))
+            .clickable(enabled = true, onClick = {
+                Log.i("MainComposeActivity", "Clicou no elemento $produto")
+                    val intent = Intent(context, CadastroComposeActivity::class.java)
+                    intent.putExtra("produto", produto)
+                    context.startActivity(intent)
+            })
     ) {
         Image(
             painter = painterResource(ic_menu_camera),

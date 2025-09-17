@@ -25,6 +25,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -38,6 +39,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.listaelementos.domain.models.Produto
 import com.example.listaelementos.ui.theme.AppTheme
 import com.example.listaelementos.ui.viewmodels.CadastroComposeViewModel
 import com.example.listaelementos.ui.viewmodels.ProdutoFormState
@@ -47,6 +49,8 @@ class CadastroComposeActivity : AppCompatActivity() {
     private val viewModel: CadastroComposeViewModel by viewModel<CadastroComposeViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val produto = intent.getParcelableExtra<Produto>("produto")
+        Log.d("CadastroProduto", "produto recebido: $produto")
         setContent {
             AppTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
@@ -55,7 +59,8 @@ class CadastroComposeActivity : AppCompatActivity() {
                         viewModel = viewModel,
                         aoSalvarComSucesso = {
                             finish()
-                        }
+                        },
+                        produto
                     )
                 }
             }
@@ -68,14 +73,24 @@ class CadastroComposeActivity : AppCompatActivity() {
 private fun FormularioCadastroDeProduto(
     modifier: Modifier,
     viewModel: CadastroComposeViewModel,
-    aoSalvarComSucesso: () -> Unit
+    aoSalvarComSucesso: () -> Unit,
+    produto: Produto?
 ) {
     val state by viewModel.state.collectAsState()
     val context = LocalContext.current
-    Column(
-        modifier = Modifier.padding(top = 40.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
+
+
+    LaunchedEffect(produto) {
+        produto?.let { p ->
+            viewModel.aoMudarNome(p.nome)
+            viewModel.aoMudarQuantidade(p.quantidade.toString())
+            viewModel.aoMudarValor(p.valor.toString())
+            viewModel.aoMudarId(p.id)
+        }
+    }
+
+    Column(modifier = Modifier.padding(top = 40.dp)) {
+
         val titulo = stringResource(id = string.lista_compras)
         TituloCadastro(titulo)
         IconeImagem()
@@ -83,10 +98,11 @@ private fun FormularioCadastroDeProduto(
             state = state,
             aoAlterarNome = viewModel::aoMudarNome,
             aoAlterarQuantidade = viewModel::aoMudarQuantidade,
-            aoAlterarValor = viewModel::aoMudarValor
+            aoAlterarValor = viewModel::aoMudarValor,
+            produto = produto
         )
         BotaoInserirProduto(aoSalvar = {
-            viewModel.valiadaParaSalvarProduct(state.nome, state.valor, state.quantidade)
+            viewModel.valiadaParaSalvarProduct(state.nome, state.valor, state.quantidade, state.id)
             aoSalvarComSucesso()
         })
     }
@@ -95,7 +111,9 @@ private fun FormularioCadastroDeProduto(
 @Composable
 private fun CamposDeTextoFormulario(
     state: ProdutoFormState,
+    produto: Produto?,
     aoAlterarNome: (String) -> Unit = {},
+    aoAlterarId: (Int) -> Unit = {},
     aoAlterarQuantidade: (String) -> Unit = {},
     aoAlterarValor: (String) -> Unit = {}
 ) {
@@ -212,7 +230,8 @@ private fun PreviewFormularioCadastroDeProduto() {
                 state = state,
                 aoAlterarNome = {},
                 aoAlterarQuantidade = {},
-                aoAlterarValor = {}
+                aoAlterarValor = {},
+                produto = null
             )
             BotaoInserirProduto(aoSalvar = {
             })

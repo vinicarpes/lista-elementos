@@ -29,6 +29,19 @@ class CadastroComposeViewModel(private val repository: ProdutoRepository) : View
             resultado.onSuccess {
                 _salvoComSucesso.postValue(true)
             }.onFailure {
+                _salvoComSucesso.postValue(false)
+            }
+
+        }
+    }
+
+    fun atualizar(prod: Produto, id: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val resultado = repository.atualizar(prod, id)
+            resultado.onSuccess {
+                _salvoComSucesso.postValue(true)
+            }.onFailure {
+                _salvoComSucesso.postValue(false)
             }
 
         }
@@ -38,20 +51,18 @@ class CadastroComposeViewModel(private val repository: ProdutoRepository) : View
         return nome.isNotEmpty() && valor.isNotEmpty() && qtd.isNotEmpty()
     }
 
-    fun valiadaParaSalvarProduct(nome: String, valor: String, qtd: String) {
-        try {
-            val p = Produto(nome, valor.toDouble(), qtd.toInt())
-            val camposPreenchidosCorretamente = verificaCampos(
-                p.nome,
-                p.valor.toString(),
-                p.quantidade.toString()
-            ) && p.validaProduto()
-            if (camposPreenchidosCorretamente) {
-                salvar(p)
-            }
 
-        } catch (e: IllegalArgumentException) {
-            Log.e("CadastroProduto", "Erro de validação: ${e.message}", e)
+    fun valiadaParaSalvarProduct(nome: String, valor: String, qtd: String, id: Int?) {
+        val p = Produto(nome, valor.toDouble(), qtd.toInt())
+        val camposPreenchidosCorretamente =
+            verificaCampos(p.nome, p.valor.toString(), p.quantidade.toString()) && p.validaProduto()
+        if (camposPreenchidosCorretamente) {
+            when (id != 0) {
+                true -> atualizar(p, id!!)
+                false -> salvar(p)
+            }
+        } else {
+            Log.d("CadastroProduto", "Campos não preenchidos corretamente")
         }
     }
 
@@ -65,12 +76,18 @@ class CadastroComposeViewModel(private val repository: ProdutoRepository) : View
 
     fun aoMudarValor(novoValor: String) {
         _state.update { it.copy(valor = novoValor) }
+
+    }
+
+    fun aoMudarId(id: Int) {
+        _state.update { it.copy(id = id) }
     }
 
 }
 
 data class ProdutoFormState(
-    val nome: String = "",
+    var nome: String = "",
     var quantidade: String = "",
-    var valor: String = ""
+    var valor: String = "",
+    var id: Int = 0
 )
