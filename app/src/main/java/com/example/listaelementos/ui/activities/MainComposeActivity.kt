@@ -1,11 +1,9 @@
 package com.example.listaelementos.ui.activities
 
 import android.R.drawable.ic_menu_camera
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -25,15 +23,16 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.internal.enableLiveLiterals
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -47,14 +46,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.listaelementos.R
-import com.example.listaelementos.database.dao.ProdutoDao
 import com.example.listaelementos.domain.models.Produto
-import com.example.listaelementos.repositories.ProdutoRepository
 import com.example.listaelementos.ui.theme.AppTheme
 import com.example.listaelementos.ui.viewmodels.MainComposeViewModel
 import com.example.listaelementos.ui.viewmodels.ProdutoComposeState
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import kotlin.getValue
 
 class MainComposeActivity : AppCompatActivity() {
     private val viewModel: MainComposeViewModel by viewModel<MainComposeViewModel>()
@@ -92,7 +88,7 @@ private fun Titulo(msg: String) {
 }
 
 @Composable
-private fun ElementoLista(produto: Produto) {
+private fun ElementoLista(produto: Produto, aoRemoverProduto: (produto: Produto) -> Unit) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
@@ -104,7 +100,7 @@ private fun ElementoLista(produto: Produto) {
             painter = painterResource(ic_menu_camera),
             contentDescription = "Ícone de câmera",
             modifier = Modifier
-                .padding(start = 4.dp, end = 16.dp)
+                .padding(start = 4.dp)
                 .clip(CircleShape)
                 .width(40.dp)
         )
@@ -123,8 +119,15 @@ private fun ElementoLista(produto: Produto) {
                     text = "R$" + produto.valor.toString()
                 )
                 Text(
-                    text = "Quantidade: " + produto.quantidade.toString(),
+                    text = "x" + produto.quantidade.toString(),
                 )
+            }
+            IconButton(onClick = {
+                Log.i("MainComposeActivity", "Clicou no botão de remover $produto")
+                aoRemoverProduto(produto)
+                Log.i("MainComposeActivity", "Deletou   $produto")
+            }) {
+                Icon(Icons.Filled.Delete, contentDescription = "Delete")
             }
         }
     }
@@ -158,7 +161,6 @@ fun ListaCompras(viewModel: MainComposeViewModel, modifier: Modifier) {
             BotaoAdicionarProduto()
             ValorDaCompra((state as ProdutoComposeState.Success).valorTotal)
         }
-
         when (state) {
             is ProdutoComposeState.Loading -> {
                 item { Text("Carregando...") }
@@ -166,7 +168,10 @@ fun ListaCompras(viewModel: MainComposeViewModel, modifier: Modifier) {
 
             is ProdutoComposeState.Success -> {
                 items((state as ProdutoComposeState.Success).produtos) { produto ->
-                    ElementoLista(produto)
+                    ElementoLista(produto, aoRemoverProduto = {
+                        viewModel.removerProduto(produto)
+                    }
+                    )
                 }
             }
 
@@ -203,7 +208,14 @@ private fun PreviewValorDaCompra() {
 @Preview
 @Composable
 private fun PreviewElementoLista() {
-    ElementoLista(Produto("Arroz Parbolizado", 10.0, 2, null))
+    AppTheme(darkTheme = true) {
+        Scaffold { innerPadding ->
+            val mod = Modifier.padding(innerPadding)
+            ElementoLista(
+                produto = Produto("Arroz Parbolizado", 10.0, 2, null),
+                aoRemoverProduto = {})
+        }
+    }
 }
 
 @Preview
@@ -225,7 +237,8 @@ private fun PreviewListaCompras() {
         Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
             ListaCompras(
                 viewModel = viewModel(),
-                modifier = Modifier.padding(innerPadding))
+                modifier = Modifier.padding(innerPadding)
+            )
         }
     }
 }

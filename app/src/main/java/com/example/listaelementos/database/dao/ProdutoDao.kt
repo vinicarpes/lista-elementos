@@ -1,7 +1,6 @@
 package com.example.listaelementos.database.dao
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -18,6 +17,10 @@ interface ProdutoDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun inserir(produto: ProdutoEntity)
 
-    @Delete
-    fun deletar(produto: ProdutoEntity)
+    @Query("DELETE FROM ProdutoEntity WHERE id = :id")
+    fun deletarPorId(id: Int)
+
+    @Query("UPDATE FROM ProdutoEntity WHERE id = :id")
+    fun atualizar(id: Int)
+
 }
