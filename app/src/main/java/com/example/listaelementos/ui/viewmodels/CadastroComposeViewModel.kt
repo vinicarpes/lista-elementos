@@ -86,8 +86,8 @@ class CadastroComposeViewModel(private val repository: ProdutoRepository) : View
 }
 
 data class ProdutoFormState(
-    var nome: String = "",
-    var quantidade: String = "",
-    var valor: String = "",
-    var id: Int = 0
+    val nome: String = "",
+    val quantidade: String = "",
+    val valor: String = "",
+    val id: Int = 0
 )
