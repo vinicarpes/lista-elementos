@@ -89,7 +89,10 @@ private fun FormularioCadastroDeProduto(
         }
     }
 
-    Column(modifier = Modifier.padding(top = 40.dp)) {
+    Column(
+        modifier = Modifier.padding(top = 40.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
 
         val titulo = stringResource(id = string.lista_compras)
         TituloCadastro(titulo)
@@ -99,7 +102,6 @@ private fun FormularioCadastroDeProduto(
             aoAlterarNome = viewModel::aoMudarNome,
             aoAlterarQuantidade = viewModel::aoMudarQuantidade,
             aoAlterarValor = viewModel::aoMudarValor,
-            produto = produto
         )
         BotaoInserirProduto(aoSalvar = {
             viewModel.valiadaParaSalvarProduct(state.nome, state.valor, state.quantidade, state.id)
@@ -111,9 +113,7 @@ private fun FormularioCadastroDeProduto(
 @Composable
 private fun CamposDeTextoFormulario(
     state: ProdutoFormState,
-    produto: Produto?,
     aoAlterarNome: (String) -> Unit = {},
-    aoAlterarId: (Int) -> Unit = {},
     aoAlterarQuantidade: (String) -> Unit = {},
     aoAlterarValor: (String) -> Unit = {}
 ) {
@@ -231,7 +231,6 @@ private fun PreviewFormularioCadastroDeProduto() {
                 aoAlterarNome = {},
                 aoAlterarQuantidade = {},
                 aoAlterarValor = {},
-                produto = null
             )
             BotaoInserirProduto(aoSalvar = {
             })
