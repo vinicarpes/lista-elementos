@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">Lista Elementos</string>
+    <string name="lista_compras">Lista de Compras</string>
+    <string name="adicionar_produto">Adicionar produto</string>
+    <string name="erro_buscar_produtos">Erro ao buscar produtos</string>
 </resources>

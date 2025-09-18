@@ -15,7 +15,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class CadastroActivity : AppCompatActivity() {
     val COD_IMAGE = 101
     var imageBitMap: Bitmap? = null
-
     private val viewModel : CadastroViewModel by viewModel<CadastroViewModel>()
 
     companion object {
