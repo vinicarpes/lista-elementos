@@ -92,6 +92,7 @@ private fun Titulo(msg: String) {
 @Composable
 private fun ElementoLista(produto: Produto, aoRemoverProduto: (produto: Produto) -> Unit) {
     val context = LocalContext.current
+  
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier

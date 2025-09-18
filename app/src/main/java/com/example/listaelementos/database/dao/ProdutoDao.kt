@@ -24,5 +24,4 @@ interface ProdutoDao {
 
     @Update
     fun atualizar(produtoEntity: ProdutoEntity)
-
 }
