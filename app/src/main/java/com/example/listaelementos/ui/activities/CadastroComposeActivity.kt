@@ -75,7 +75,7 @@ private fun FormularioCadastroDeProduto(
     Column(
         modifier = Modifier.padding(top = 40.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
+    ) {
         val titulo = stringResource(id = string.lista_compras)
         TituloCadastro(titulo)
         IconeImagem()
@@ -99,49 +99,32 @@ private fun CamposDeTextoFormulario(
     aoAlterarQuantidade: (String) -> Unit = {},
     aoAlterarValor: (String) -> Unit = {}
 ) {
-    OutlinedTextField(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(12.dp),
-        label = {
-            Text(
-                text = stringResource(id = string.Produto_padrao),
-            )
-        },
+    val modifier = Modifier
+        .fillMaxWidth()
+        .padding(12.dp)
+    val tecladoNumerico = KeyboardOptions(
+        keyboardType = KeyboardType.Number
+    )
+
+    CampoDeTextoFormulario(
+        modifier = modifier,
         value = state.nome,
-        onValueChange = aoAlterarNome
+        aoMudarValor = aoAlterarNome,
+        label = stringResource(id = string.Produto_padrao)
     )
-    OutlinedTextField(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(12.dp),
-        label = {
-            Text(
-                text = stringResource(id = string.quantidade_padrao),
-            )
-        },
+    CampoDeTextoFormulario(
+        modifier = modifier,
         value = state.quantidade,
-        onValueChange = aoAlterarQuantidade,
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Number
-        ),
-        singleLine = true
+        aoMudarValor = aoAlterarQuantidade,
+        label = stringResource(id = string.quantidade_padrao),
+        keyboardOptions = tecladoNumerico
     )
-    OutlinedTextField(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(12.dp),
-        label = {
-            Text(
-                text = stringResource(id = string.valor_padrao),
-            )
-        },
+    CampoDeTextoFormulario(
+        modifier = modifier,
         value = state.valor,
-        onValueChange = aoAlterarValor,
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Number
-        ),
-        singleLine = true
+        aoMudarValor = aoAlterarValor,
+        label = stringResource(id = string.valor_padrao),
+        keyboardOptions = tecladoNumerico
     )
 }
 
@@ -190,29 +173,49 @@ private fun TituloCadastro(msg: String) {
     )
 }
 
+@Composable
+fun CampoDeTextoFormulario(
+    modifier: Modifier = Modifier,
+    value: String,
+    aoMudarValor: (String) -> Unit,
+    label: String,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default
+) {
+    OutlinedTextField(
+        modifier = modifier,
+        label = {
+            Text(
+                text = label,
+            )
+        },
+        value = value,
+        onValueChange = aoMudarValor,
+        keyboardOptions = keyboardOptions,
+        singleLine = true
+    )
+}
+
 
 @Preview
 @Composable
 private fun PreviewFormularioCadastroDeProduto() {
     AppTheme(darkTheme = true) {
-        Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-            Column(
-                modifier = Modifier.padding(top = 40.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                val titulo = stringResource(id = string.lista_compras)
-                val state = ProdutoFormState()
-                TituloCadastro(titulo)
-                IconeImagem()
-                CamposDeTextoFormulario(
-                    state = state,
-                    aoAlterarNome = {},
-                    aoAlterarQuantidade = {},
-                    aoAlterarValor = {}
-                )
-                BotaoInserirProduto(aoSalvar = {
-                })
-            }
+        Column(
+            modifier = Modifier.padding(top = 40.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            val titulo = stringResource(id = string.lista_compras)
+            val state = ProdutoFormState()
+            TituloCadastro(titulo)
+            IconeImagem()
+            CamposDeTextoFormulario(
+                state = state,
+                aoAlterarNome = {},
+                aoAlterarQuantidade = {},
+                aoAlterarValor = {}
+            )
+            BotaoInserirProduto(aoSalvar = {
+            })
         }
     }
 }
