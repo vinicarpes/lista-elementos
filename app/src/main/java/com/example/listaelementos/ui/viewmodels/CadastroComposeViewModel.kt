@@ -1,5 +1,7 @@
 package com.example.listaelementos.ui.viewmodels
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.animation.core.copy
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -18,10 +20,6 @@ class CadastroComposeViewModel(private val repository: ProdutoRepository) : View
     private val _state = MutableStateFlow(ProdutoFormState())
     val state = _state.asStateFlow()
 
-    private val _mensagemToast = MutableLiveData<String?>()
-    val mensagemToast: LiveData<String?> =
-        _mensagemToast
-
     private val _salvoComSucesso = MutableLiveData<Boolean>()
     val salvoComSucesso: LiveData<Boolean> = _salvoComSucesso
 
@@ -31,7 +29,19 @@ class CadastroComposeViewModel(private val repository: ProdutoRepository) : View
             resultado.onSuccess {
                 _salvoComSucesso.postValue(true)
             }.onFailure {
-                _mensagemToast.postValue("Erro ao salvar o produto")
+                _salvoComSucesso.postValue(false)
+            }
+
+        }
+    }
+
+    fun atualizar(prod: Produto, id: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val resultado = repository.atualizar(prod, id)
+            resultado.onSuccess {
+                _salvoComSucesso.postValue(true)
+            }.onFailure {
+                _salvoComSucesso.postValue(false)
             }
 
         }
@@ -41,35 +51,43 @@ class CadastroComposeViewModel(private val repository: ProdutoRepository) : View
         return nome.isNotEmpty() && valor.isNotEmpty() && qtd.isNotEmpty()
     }
 
-    fun valiadaParaSalvarProduct(nome: String, valor: String, qtd: String){
+
+    fun valiadaParaSalvarProduct(nome: String, valor: String, qtd: String, id: Int?) {
         val p = Produto(nome, valor.toDouble(), qtd.toInt())
-        val camposPreenchidosCorretamente = verificaCampos(p.nome, p.valor.toString(), p.quantidade.toString()) && p.validaProduto()
+        val camposPreenchidosCorretamente =
+            verificaCampos(p.nome, p.valor.toString(), p.quantidade.toString()) && p.validaProduto()
         if (camposPreenchidosCorretamente) {
-            salvar(p)
+            when (id != 0) {
+                true -> atualizar(p, id!!)
+                false -> salvar(p)
+            }
         } else {
-            _mensagemToast.value = "Preencha todos os campos corretamente"
+            Log.d("CadastroProduto", "Campos não preenchidos corretamente")
         }
     }
 
-    fun aoExibirToast() {
-        _mensagemToast.value = null
-
-    }
-
     fun aoMudarNome(novoNome: String) {
-        _state.update {  it.copy(nome = novoNome) }
+        _state.update { it.copy(nome = novoNome) }
     }
+
     fun aoMudarQuantidade(novaQuantidade: String) {
-        _state.update {  it.copy(quantidade = novaQuantidade) }
+        _state.update { it.copy(quantidade = novaQuantidade) }
     }
+
     fun aoMudarValor(novoValor: String) {
-        _state.update {  it.copy(valor = novoValor) }
+        _state.update { it.copy(valor = novoValor) }
+
+    }
+
+    fun aoMudarId(id: Int) {
+        _state.update { it.copy(id = id) }
     }
 
 }
 
 data class ProdutoFormState(
     val nome: String = "",
-    var quantidade: String = "",
-    var valor: String = ""
+    val quantidade: String = "",
+    val valor: String = "",
+    val id: Int = 0
 )

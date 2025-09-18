@@ -19,6 +19,7 @@ val appModule = module {
     viewModelOf(::CadastroViewModel)
     viewModelOf(::MainComposeViewModel)
     viewModelOf(::CadastroComposeViewModel)
+
     single {
         Room.databaseBuilder(
             androidContext(),
