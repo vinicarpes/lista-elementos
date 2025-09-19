@@ -1,11 +1,6 @@
 package com.example.listaelementos.ui.viewmodels
 
 import android.util.Log
-import android.widget.Toast
-import androidx.compose.animation.core.copy
-import androidx.compose.runtime.LaunchedEffect
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.listaelementos.domain.models.Produto
@@ -25,9 +20,9 @@ class CadastroComposeViewModel(private val repository: ProdutoRepository) : View
         viewModelScope.launch(Dispatchers.IO) {
             val resultado = repository.salvar(prod)
             resultado.onSuccess {
-                _state.update { it.copy(mensagemSucesso = "Produto inserido com sucesso!") }
+                atualizarMensagemSucesso("Produto atualizado com sucesso!")
             }.onFailure {
-                _state.update { it.copy(mensagemErro = "Não foi possível inserir o produto na lista") }
+                atualizarMensagemErro("Não foi possível atualizar o produto na lista")
             }
 
         }
@@ -37,9 +32,9 @@ class CadastroComposeViewModel(private val repository: ProdutoRepository) : View
         viewModelScope.launch(Dispatchers.IO) {
             val resultado = repository.atualizar(prod, id)
             resultado.onSuccess {
-                _state.update { it.copy(mensagemSucesso = "Produto atualizado com sucesso!") }
+                atualizarMensagemSucesso("Produto atualizado com sucesso!")
             }.onFailure {
-                _state.update { it.copy(mensagemErro = "Não foi possível atualizar o produto na lista") }
+                atualizarMensagemErro("Não foi possível atualizar o produto na lista")
             }
 
         }
@@ -50,26 +45,37 @@ class CadastroComposeViewModel(private val repository: ProdutoRepository) : View
     }
 
 
-    fun valiadaParaSalvarProduct() : String {
-        val mensagemRetornada : String?
-        val p = Produto(
-            _state.value.nome,
-            _state.value.valor.toDouble(),
-            _state.value.quantidade.toInt()
-        )
-        val camposPreenchidosCorretamente =
-            verificaCampos(p.nome, p.valor.toString(), p.quantidade.toString()) && p.validaProduto()
-        if (camposPreenchidosCorretamente) {
-            when (_state.value.id != 0) {
-                true -> atualizar(p, _state.value.id)
-                false -> salvar(p)
+    fun valiadaParaSalvarProduct(
+        sucesso: (Boolean) -> Unit
+    ) {
+        try {
+            val p = Produto(
+                _state.value.nome,
+                _state.value.valor.toDouble(),
+                _state.value.quantidade.toInt()
+            )
+            val camposPreenchidosCorretamente = verificaCampos(p.nome, p.valor.toString(), p.quantidade.toString()) && p.validaProduto()
+            if (camposPreenchidosCorretamente) {
+                when (_state.value.id != 0) {
+                    true -> atualizar(p, _state.value.id)
+                    false -> salvar(p)
+                }
+                sucesso(true)
+            } else {
+                sucesso(false)
             }
-            mensagemRetornada = _state.value.mensagemSucesso
-            return mensagemRetornada.toString()
-        } else {
-            mensagemRetornada = _state.value.mensagemErro
-            return mensagemRetornada.toString()
+        } catch (e : NumberFormatException){
+            atualizarMensagemErro("Preencha todos os campos corretamente")
+            Log.d("CadatroComposeViewModel", e.message.toString())
         }
+
+    }
+
+    fun atualizarMensagemErro(mensagem: String) {
+        _state.update { it.copy(mensagemErro = mensagem) }
+    }
+    fun atualizarMensagemSucesso(mensagem: String) {
+        _state.update { it.copy(mensagemSucesso = mensagem) }
     }
 
     fun aoMudarNome(novoNome: String) {

@@ -16,11 +16,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.Button
-import androidx.compose.material3.ExtendedFloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
@@ -90,6 +86,7 @@ class CadastroComposeActivity : AppCompatActivity() {
                                 }
                             }
                         },
+                        context = this,
                         produto = produto
                     )
                 }
@@ -107,6 +104,7 @@ class CadastroComposeActivity : AppCompatActivity() {
 @Composable
 private fun FormularioCadastroDeProduto(
     modifier: Modifier,
+    context: CadastroComposeActivity,
     viewModel: CadastroComposeViewModel,
     exibirMensagemRetornada: (String) -> Unit,
     produto: Produto?
@@ -142,7 +140,9 @@ private fun FormularioCadastroDeProduto(
             aoAlterarValor = viewModel::aoMudarValor,
         )
         BotaoInserirProduto(aoSalvar = {
-            viewModel.valiadaParaSalvarProduct()
+            viewModel.valiadaParaSalvarProduct{ sucesso ->
+                if(sucesso) context.finish()
+            }
         })
     }
 }
