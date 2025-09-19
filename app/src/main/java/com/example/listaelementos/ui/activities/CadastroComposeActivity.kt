@@ -16,14 +16,18 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -33,7 +37,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -57,18 +60,34 @@ class CadastroComposeActivity : AppCompatActivity() {
         Log.d("CadastroProduto", "produto recebido: $produto")
         setContent {
             AppTheme {
-                val snackbarHostState = remember { SnackbarHostState() }
                 val scope = rememberCoroutineScope()
-
+                val snackbarHostState = remember { SnackbarHostState() }
                 Scaffold(
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize(),
+                    snackbarHost = {
+                        SnackbarHost(hostState = snackbarHostState)
+                    }
                 ) { innerPadding ->
                     FormularioCadastroDeProduto(
                         modifier = Modifier.padding(innerPadding),
                         viewModel = viewModel,
                         exibirMensagemRetornada = { mensagem ->
                             scope.launch {
-                                snackbarHostState.showSnackbar(mensagem)
+                                val result = snackbarHostState
+                                    .showSnackbar(
+                                        message = mensagem,
+                                        actionLabel = "Fechar",
+                                        duration = SnackbarDuration.Indefinite
+                                    )
+                                when (result) {
+                                    SnackbarResult.ActionPerformed -> {
+                                        /* Handle snackbar action performed */
+                                    }
+
+                                    SnackbarResult.Dismissed -> {
+                                        /* Handle snackbar dismissed */
+                                    }
+                                }
                             }
                         },
                         produto = produto
@@ -98,6 +117,17 @@ private fun FormularioCadastroDeProduto(
         viewModel.atualizaValoresProdutoState(produto)
     }
 
+    LaunchedEffect(state.mensagemSucesso, state.mensagemErro) {
+        state.mensagemSucesso?.let {
+            exibirMensagemRetornada(it)
+            viewModel.limparMensagem()
+        }
+        state.mensagemErro?.let {
+            exibirMensagemRetornada(it)
+            viewModel.limparMensagem()
+        }
+    }
+
     Column(
         modifier = Modifier.padding(top = 40.dp),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -112,8 +142,7 @@ private fun FormularioCadastroDeProduto(
             aoAlterarValor = viewModel::aoMudarValor,
         )
         BotaoInserirProduto(aoSalvar = {
-            val mensagemRetornada = viewModel.valiadaParaSalvarProduct()
-            exibirMensagemRetornada(mensagemRetornada)
+            viewModel.valiadaParaSalvarProduct()
         })
     }
 }

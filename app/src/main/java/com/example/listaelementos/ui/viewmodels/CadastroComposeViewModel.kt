@@ -95,6 +95,10 @@ class CadastroComposeViewModel(private val repository: ProdutoRepository) : View
         aoMudarValor(p?.valor?.toString() ?: "")
         aoMudarId(p?.id ?: 0)
     }
+
+    fun limparMensagem() {
+        _state.update { it.copy(mensagemSucesso = null, mensagemErro = null) }
+    }
 }
 
 data class ProdutoFormState(
