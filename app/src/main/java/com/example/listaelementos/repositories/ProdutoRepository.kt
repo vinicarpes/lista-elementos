@@ -24,6 +24,11 @@ class ProdutoRepository (
         }
     }
 
+     suspend fun remover(produto: Produto) : Result<Unit> = withContext(IO) {
+         runCatching {
+             dao.deletarPorId(produto.id)
+         }
+     }
 }
 
 fun Produto.paraEntidade() = ProdutoEntity(

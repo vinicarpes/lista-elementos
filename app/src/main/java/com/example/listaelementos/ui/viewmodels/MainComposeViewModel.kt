@@ -1,6 +1,6 @@
 package com.example.listaelementos.ui.viewmodels
 
-import androidx.compose.ui.res.stringResource
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.listaelementos.R
@@ -19,21 +19,40 @@ class MainComposeViewModel(private val repository: ProdutoRepository) : ViewMode
     private val _state = MutableStateFlow(ProdutoComposeState())
     val state = _state.asStateFlow()
 
-    fun getProdutos(){
+    fun getProdutos() {
         viewModelScope.launch(Dispatchers.IO) {
             _state.update { ProdutoComposeState.Loading }
             val result = repository.buscarProdutos()
             result.onSuccess { entidades ->
                 val produtos = entidades.map { entidade -> entidade.paraProduto() }
-                _state.update { ProdutoComposeState.Success(produtos,atualizarValorTotal(produtos)) }
-            }.onFailure { e->
+                _state.update {
+                    ProdutoComposeState.Success(
+                        produtos,
+                        atualizarValorTotal(produtos)
+                    )
+                }
+            }.onFailure { e ->
                 val mensagemErro = R.string.erro_buscar_produtos.toString()
                 _state.update { ProdutoComposeState.Error(e.message ?: mensagemErro) }
             }
         }
     }
 
-    private fun atualizarValorTotal(produtos: List<Produto>) : String {
+    fun removerProduto(produto: Produto) {
+        viewModelScope.launch(Dispatchers.IO) {
+            Log.d("VIEWMODEL", "Tentando remover: $produto")
+            val result = repository.remover(produto)
+            result.onSuccess {
+                getProdutos()
+            }
+                .onFailure { e ->
+                    val mensagemErro = R.string.erro_remover_produto.toString()
+                    _state.update { ProdutoComposeState.Error(e.message ?: mensagemErro) }
+                }
+        }
+    }
+
+    private fun atualizarValorTotal(produtos: List<Produto>): String {
         val soma = produtos.sumOf { it.valor * it.quantidade }
         require(soma >= 0)
         val f = NumberFormat.getCurrencyInstance(Locale("pt", "br"))
@@ -41,9 +60,11 @@ class MainComposeViewModel(private val repository: ProdutoRepository) : ViewMode
     }
 }
 
- open class ProdutoComposeState{
+open class ProdutoComposeState {
     object Loading : ProdutoComposeState()
-    data class Success(val produtos: List<Produto>, val valorTotal: String = "0.00") : ProdutoComposeState()
+    data class Success(val produtos: List<Produto>, val valorTotal: String = "0.00") :
+        ProdutoComposeState()
+
     data class Error(val message: String) : ProdutoComposeState()
 
 }
