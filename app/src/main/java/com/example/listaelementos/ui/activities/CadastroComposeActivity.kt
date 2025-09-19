@@ -69,21 +69,12 @@ class CadastroComposeActivity : AppCompatActivity() {
                         viewModel = viewModel,
                         exibirMensagemRetornada = { mensagem ->
                             scope.launch {
-                                val result = snackbarHostState
+                                 snackbarHostState
                                     .showSnackbar(
                                         message = mensagem,
                                         actionLabel = "Fechar",
                                         duration = SnackbarDuration.Indefinite
                                     )
-                                when (result) {
-                                    SnackbarResult.ActionPerformed -> {
-                                        /* Handle snackbar action performed */
-                                    }
-
-                                    SnackbarResult.Dismissed -> {
-                                        /* Handle snackbar dismissed */
-                                    }
-                                }
                             }
                         },
                         context = this,
