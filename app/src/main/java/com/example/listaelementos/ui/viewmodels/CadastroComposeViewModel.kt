@@ -3,6 +3,7 @@ package com.example.listaelementos.ui.viewmodels
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.core.copy
+import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -20,16 +21,13 @@ class CadastroComposeViewModel(private val repository: ProdutoRepository) : View
     private val _state = MutableStateFlow(ProdutoFormState())
     val state = _state.asStateFlow()
 
-    private val _salvoComSucesso = MutableLiveData<Boolean>()
-    val salvoComSucesso: LiveData<Boolean> = _salvoComSucesso
-
     fun salvar(prod: Produto) {
         viewModelScope.launch(Dispatchers.IO) {
             val resultado = repository.salvar(prod)
             resultado.onSuccess {
-                _salvoComSucesso.postValue(true)
+                _state.update { it.copy(mensagemSucesso = "Produto inserido com sucesso!") }
             }.onFailure {
-                _salvoComSucesso.postValue(false)
+                _state.update { it.copy(mensagemErro = "Não foi possível inserir o produto na lista") }
             }
 
         }
@@ -39,9 +37,9 @@ class CadastroComposeViewModel(private val repository: ProdutoRepository) : View
         viewModelScope.launch(Dispatchers.IO) {
             val resultado = repository.atualizar(prod, id)
             resultado.onSuccess {
-                _salvoComSucesso.postValue(true)
+                _state.update { it.copy(mensagemSucesso = "Produto atualizado com sucesso!") }
             }.onFailure {
-                _salvoComSucesso.postValue(false)
+                _state.update { it.copy(mensagemErro = "Não foi possível atualizar o produto na lista") }
             }
 
         }
@@ -52,17 +50,25 @@ class CadastroComposeViewModel(private val repository: ProdutoRepository) : View
     }
 
 
-    fun valiadaParaSalvarProduct(nome: String, valor: String, qtd: String, id: Int?) {
-        val p = Produto(nome, valor.toDouble(), qtd.toInt())
+    fun valiadaParaSalvarProduct() : String {
+        val mensagemRetornada : String?
+        val p = Produto(
+            _state.value.nome,
+            _state.value.valor.toDouble(),
+            _state.value.quantidade.toInt()
+        )
         val camposPreenchidosCorretamente =
             verificaCampos(p.nome, p.valor.toString(), p.quantidade.toString()) && p.validaProduto()
         if (camposPreenchidosCorretamente) {
-            when (id != 0) {
-                true -> atualizar(p, id!!)
+            when (_state.value.id != 0) {
+                true -> atualizar(p, _state.value.id)
                 false -> salvar(p)
             }
+            mensagemRetornada = _state.value.mensagemSucesso
+            return mensagemRetornada.toString()
         } else {
-            Log.d("CadastroProduto", "Campos não preenchidos corretamente")
+            mensagemRetornada = _state.value.mensagemErro
+            return mensagemRetornada.toString()
         }
     }
 
@@ -70,12 +76,12 @@ class CadastroComposeViewModel(private val repository: ProdutoRepository) : View
         _state.update { it.copy(nome = novoNome) }
     }
 
-    fun aoMudarQuantidade(novaQuantidade: String) {
-        _state.update { it.copy(quantidade = novaQuantidade) }
+    fun aoMudarQuantidade(novaQuantidade: String?) {
+        _state.update { it.copy(quantidade = novaQuantidade.toString()) }
     }
 
-    fun aoMudarValor(novoValor: String) {
-        _state.update { it.copy(valor = novoValor) }
+    fun aoMudarValor(novoValor: String?) {
+        _state.update { it.copy(valor = novoValor.toString()) }
 
     }
 
@@ -83,11 +89,19 @@ class CadastroComposeViewModel(private val repository: ProdutoRepository) : View
         _state.update { it.copy(id = id) }
     }
 
+    fun atualizaValoresProdutoState(p: Produto?) {
+        aoMudarNome(p?.nome ?: "")
+        aoMudarQuantidade(p?.quantidade?.toString() ?: "")
+        aoMudarValor(p?.valor?.toString() ?: "")
+        aoMudarId(p?.id ?: 0)
+    }
 }
 
 data class ProdutoFormState(
     val nome: String = "",
     val quantidade: String = "",
     val valor: String = "",
-    val id: Int = 0
+    val id: Int = 0,
+    val mensagemErro: String? = null,
+    val mensagemSucesso: String? = null
 )
