@@ -45,7 +45,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.listaelementos.R
 import com.example.listaelementos.domain.models.Produto
@@ -53,6 +52,7 @@ import com.example.listaelementos.ui.theme.AppTheme
 import com.example.listaelementos.ui.viewmodels.MainComposeViewModel
 import com.example.listaelementos.ui.viewmodels.ProdutoComposeState
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.io.Serializable
 
 class MainComposeActivity : AppCompatActivity() {
     private val viewModel: MainComposeViewModel by viewModel<MainComposeViewModel>()
@@ -92,7 +92,7 @@ private fun Titulo(msg: String) {
 @Composable
 private fun ElementoLista(produto: Produto, aoRemoverProduto: (produto: Produto) -> Unit) {
     val context = LocalContext.current
-  
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
@@ -101,9 +101,9 @@ private fun ElementoLista(produto: Produto, aoRemoverProduto: (produto: Produto)
             .border(border = BorderStroke(1.dp, Color.Gray))
             .clickable(enabled = true, onClick = {
                 Log.i("MainComposeActivity", "Clicou no elemento $produto")
-                    val intent = Intent(context, CadastroComposeActivity::class.java)
-                    intent.putExtra("produto", produto)
-                    context.startActivity(intent)
+                val intent = Intent(context, CadastroComposeActivity::class.java)
+                intent.putExtra("produto", produto as Serializable)
+                context.startActivity(intent)
             })
     ) {
         Image(
@@ -169,7 +169,15 @@ fun ListaCompras(viewModel: MainComposeViewModel, modifier: Modifier) {
             val titulo = stringResource(id = R.string.lista_compras)
             Titulo(titulo)
             BotaoAdicionarProduto()
-            ValorDaCompra((state as ProdutoComposeState.Success).valorTotal)
+            when (val s = state) {
+                is ProdutoComposeState.Loading -> {
+                    ValorDaCompra("")
+                }
+
+                is ProdutoComposeState.Success -> {
+                    ValorDaCompra(s.valorTotal)
+                }
+            }
         }
         when (state) {
             is ProdutoComposeState.Loading -> {
