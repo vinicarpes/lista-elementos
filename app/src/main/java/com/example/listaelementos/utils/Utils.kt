@@ -12,3 +12,9 @@ fun bitmapToByteArray(bitmap: Bitmap): ByteArray {
     bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
     return stream.toByteArray()
 }
+
+object Constants {
+    object URL {
+        const val BASE_URL = "https://poetrydb.org"
+    }
+}
