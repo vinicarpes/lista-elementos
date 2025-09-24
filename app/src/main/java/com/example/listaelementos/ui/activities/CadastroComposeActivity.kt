@@ -105,11 +105,13 @@ private fun FormularioCadastroDeProduto(
         viewModel.atualizaValoresProdutoState(produto)
     }
 
-    LaunchedEffect(state.mensagemSucesso, state.mensagemErro) {
+    LaunchedEffect(state.mensagemSucesso) {
         state.mensagemSucesso?.let {
             exibirMensagemRetornada(it)
             viewModel.limparMensagem()
         }
+    }
+    LaunchedEffect(state.mensagemErro) {
         state.mensagemErro?.let {
             exibirMensagemRetornada(it)
             viewModel.limparMensagem()
