@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.listaelementos.database.dao.ProdutoDao
 import com.example.listaelementos.database.entities.ProdutoEntity
-@Database(entities = [ProdutoEntity::class], version = 1)
+@Database(entities = [ProdutoEntity::class], version = 1, exportSchema = false)
 abstract class ListaComprasDatabase : RoomDatabase() {
     abstract fun produtoDao(): ProdutoDao
     companion object {
