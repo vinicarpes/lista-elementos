@@ -99,7 +99,6 @@ private fun ElementoLista(produto: Produto, aoRemoverProduto: (produto: Produto)
             .fillMaxWidth()
             .border(border = BorderStroke(1.dp, Color.Gray))
             .clickable(enabled = true, onClick = {
-                Log.i("MainComposeActivity", "Clicou no elemento $produto")
                 val intent = Intent(context, CadastroComposeActivity::class.java)
                 intent.putExtra("produto", produto as Serializable)
                 context.startActivity(intent)
@@ -157,6 +156,21 @@ private fun BotaoAdicionarProduto() {
         Text(text = adicionarProduto)
     }
 }
+@Composable
+private fun BotaoListaLojas() {
+    val context = LocalContext.current
+    Button(
+        onClick = { context.startActivity(Intent(context, ListaLojasComposeActivity::class.java)) },
+        contentPadding = PaddingValues(16.dp, 12.dp),
+        shape = RoundedCornerShape(24.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+    ) {
+        val listaLojas = "Lista de Lojas"
+        Text(text = listaLojas)
+    }
+}
 
 @Composable
 fun ListaCompras(viewModel: MainComposeViewModel, modifier: Modifier) {
@@ -167,6 +181,7 @@ fun ListaCompras(viewModel: MainComposeViewModel, modifier: Modifier) {
         item {
             val titulo = stringResource(id = R.string.lista_compras)
             Titulo(titulo)
+            BotaoListaLojas()
             BotaoAdicionarProduto()
             when (val s = state) {
                 is ProdutoComposeState.Loading -> {
