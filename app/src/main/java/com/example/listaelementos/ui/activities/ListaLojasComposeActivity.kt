@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.listaelementos.R
 import com.example.listaelementos.dto.LojaParaListagemDTO
+import com.example.listaelementos.ui.components.BotaoPrimario
 import com.example.listaelementos.ui.theme.AppTheme
 import com.example.listaelementos.ui.viewmodels.ListaLojasComposeViewModel
 import com.example.listaelementos.ui.viewmodels.LojaState
@@ -119,31 +120,28 @@ private fun ElementoLista(loja: LojaParaListagemDTO) {
 }
 
 @Composable
-private fun BotaoAdicionarProduto() {
-    val context = LocalContext.current
-    Button(
-        onClick = { context.startActivity(Intent(context, CadastroComposeActivity::class.java)) },
-        contentPadding = PaddingValues(16.dp, 12.dp),
-        shape = RoundedCornerShape(24.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-    ) {
-        val adicionarProduto = stringResource(id = R.string.adicionar_produto)
-        Text(text = adicionarProduto)
-    }
-}
-
-@Composable
 private fun ListaLojas(viewModel: ListaLojasComposeViewModel, modifier: Modifier) {
 
     val state by viewModel.lojaState.collectAsState()
+    val context = LocalContext.current
 
     LazyColumn {
         item {
-            val titulo = stringResource(id = R.string.lista_compras)
+            val titulo = "Lista de Lojas"
             Titulo(titulo)
-            BotaoAdicionarProduto()
+            BotaoPrimario(
+                text = stringResource(
+                    R.string.adicionar_produto
+                ),
+                onClick = {
+                    context.startActivity(
+                        Intent(
+                            context,
+                            CadastroComposeActivity::class.java
+                        )
+                    )
+                },
+            )
         }
         when (state) {
             is LojaState.Loading -> {
@@ -195,7 +193,7 @@ private fun PreviewTitulo() {
 @Preview
 @Composable
 private fun PreviewBotaoAdicionarProduto() {
-    BotaoAdicionarProduto()
+    BotaoPrimario("Adicionar Produto", onClick = {})
 }
 
 @Preview

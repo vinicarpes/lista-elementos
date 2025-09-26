@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -48,6 +49,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.listaelementos.R
 import com.example.listaelementos.domain.models.Produto
+import com.example.listaelementos.ui.components.BotaoPrimario
 import com.example.listaelementos.ui.theme.AppTheme
 import com.example.listaelementos.ui.viewmodels.MainComposeViewModel
 import com.example.listaelementos.ui.viewmodels.ProdutoComposeState
@@ -142,21 +144,6 @@ private fun ElementoLista(produto: Produto, aoRemoverProduto: (produto: Produto)
 }
 
 @Composable
-private fun BotaoAdicionarProduto() {
-    val context = LocalContext.current
-    Button(
-        onClick = { context.startActivity(Intent(context, CadastroComposeActivity::class.java)) },
-        contentPadding = PaddingValues(16.dp, 12.dp),
-        shape = RoundedCornerShape(24.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-    ) {
-        val adicionarProduto = stringResource(id = R.string.adicionar_produto)
-        Text(text = adicionarProduto)
-    }
-}
-@Composable
 private fun BotaoListaLojas() {
     val context = LocalContext.current
     Button(
@@ -176,13 +163,33 @@ private fun BotaoListaLojas() {
 fun ListaCompras(viewModel: MainComposeViewModel, modifier: Modifier) {
 
     val state by viewModel.state.collectAsState()
+    val context = LocalContext.current
 
     LazyColumn {
         item {
             val titulo = stringResource(id = R.string.lista_compras)
             Titulo(titulo)
-            BotaoListaLojas()
-            BotaoAdicionarProduto()
+            BotaoPrimario(
+                text = "Buscar Lojas",
+                onClick = {
+                    context.startActivity(
+                        Intent(
+                            context,
+                            ListaLojasComposeActivity::class.java
+                        )
+                    )
+                })
+            BotaoPrimario(
+                stringResource(R.string.adicionar_produto),
+                onClick = {
+                    context.startActivity(
+                        Intent(
+                            context,
+                            CadastroComposeActivity::class.java
+                        )
+                    )
+                },
+            )
             when (val s = state) {
                 is ProdutoComposeState.Loading -> {
                     ValorDaCompra("")
@@ -259,7 +266,7 @@ private fun PreviewTitulo() {
 @Preview
 @Composable
 private fun PreviewBotaoAdicionarProduto() {
-    BotaoAdicionarProduto()
+    BotaoPrimario("Adicionar Produto", onClick = {})
 }
 
 @Preview

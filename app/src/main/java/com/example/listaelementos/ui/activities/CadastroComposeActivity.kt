@@ -41,6 +41,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.listaelementos.R.string
 import com.example.listaelementos.domain.models.Produto
+import com.example.listaelementos.ui.components.BotaoPrimario
 import com.example.listaelementos.ui.theme.AppTheme
 import com.example.listaelementos.ui.viewmodels.CadastroComposeViewModel
 import com.example.listaelementos.ui.viewmodels.ProdutoFormState
@@ -68,7 +69,7 @@ class CadastroComposeActivity : AppCompatActivity() {
                         viewModel = viewModel,
                         exibirMensagemRetornada = { mensagem ->
                             scope.launch {
-                                 snackbarHostState
+                                snackbarHostState
                                     .showSnackbar(
                                         message = mensagem,
                                         actionLabel = "Fechar",
@@ -131,11 +132,13 @@ private fun FormularioCadastroDeProduto(
             aoAlterarQuantidade = viewModel::aoMudarQuantidade,
             aoAlterarValor = viewModel::aoMudarValor,
         )
-        BotaoInserirProduto(aoSalvar = {
-            viewModel.valiadaParaSalvarProduct{ sucesso ->
-                if(sucesso) context.finish()
-            }
-        })
+        BotaoPrimario(
+            text = stringResource(id = string.botao_inserir_produto),
+            onClick = {
+                viewModel.valiadaParaSalvarProduct { sucesso ->
+                    if (sucesso) context.finish()
+                }
+            })
     }
 }
 
@@ -194,17 +197,7 @@ private fun IconeImagem() {
 
 @Composable
 private fun BotaoInserirProduto(aoSalvar: () -> Unit = {}) {
-    val textoBotao = stringResource(id = string.botao_inserir_produto)
-    Button(
-        onClick = aoSalvar,
-        contentPadding = PaddingValues(16.dp, 12.dp),
-        shape = RoundedCornerShape(24.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-    ) {
-        Text(text = textoBotao)
-    }
+    BotaoPrimario(text = stringResource(id = string.botao_inserir_produto), onClick = aoSalvar)
 }
 
 
