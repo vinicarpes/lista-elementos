@@ -14,9 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
@@ -34,14 +32,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.listaelementos.R.string
 import com.example.listaelementos.domain.models.Produto
 import com.example.listaelementos.ui.components.BotaoPrimario
+import com.example.listaelementos.ui.components.ListaComprasTopBar
 import com.example.listaelementos.ui.theme.AppTheme
 import com.example.listaelementos.ui.viewmodels.CadastroComposeViewModel
 import com.example.listaelementos.ui.viewmodels.ProdutoFormState
@@ -59,13 +56,13 @@ class CadastroComposeActivity : AppCompatActivity() {
                 val scope = rememberCoroutineScope()
                 val snackbarHostState = remember { SnackbarHostState() }
                 Scaffold(
+                    topBar = { ListaComprasTopBar(this) },
                     modifier = Modifier.fillMaxSize(),
                     snackbarHost = {
                         SnackbarHost(hostState = snackbarHostState)
                     }
                 ) { innerPadding ->
                     FormularioCadastroDeProduto(
-                        modifier = Modifier.padding(innerPadding),
                         viewModel = viewModel,
                         exibirMensagemRetornada = { mensagem ->
                             scope.launch {
@@ -78,7 +75,8 @@ class CadastroComposeActivity : AppCompatActivity() {
                             }
                         },
                         context = this,
-                        produto = produto
+                        produto = produto,
+                        innerPadding = innerPadding
                     )
                 }
             }
@@ -94,7 +92,7 @@ class CadastroComposeActivity : AppCompatActivity() {
 
 @Composable
 private fun FormularioCadastroDeProduto(
-    modifier: Modifier,
+    innerPadding: PaddingValues,
     context: CadastroComposeActivity,
     viewModel: CadastroComposeViewModel,
     exibirMensagemRetornada: (String) -> Unit,
@@ -120,11 +118,10 @@ private fun FormularioCadastroDeProduto(
     }
 
     Column(
-        modifier = Modifier.padding(top = 40.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier = Modifier.padding(innerPadding),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
 
-        TituloCadastro(stringResource(string.lista_compras))
         IconeImagem()
         CamposDeTextoFormulario(
             state = state,
@@ -200,17 +197,6 @@ private fun BotaoInserirProduto(aoSalvar: () -> Unit = {}) {
     BotaoPrimario(text = stringResource(id = string.botao_inserir_produto), onClick = aoSalvar)
 }
 
-
-@Composable
-private fun TituloCadastro(msg: String) {
-    Text(
-        text = msg,
-        fontWeight = FontWeight.Bold,
-        modifier = Modifier.fillMaxWidth(),
-        textAlign = TextAlign.Center
-    )
-}
-
 @Composable
 fun CampoDeTextoFormulario(
     modifier: Modifier = Modifier,
@@ -242,9 +228,7 @@ private fun PreviewFormularioCadastroDeProduto() {
             modifier = Modifier.padding(top = 40.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            val titulo = stringResource(id = string.lista_compras)
             val state = ProdutoFormState()
-            TituloCadastro(titulo)
             IconeImagem()
             CamposDeTextoFormulario(
                 state = state,

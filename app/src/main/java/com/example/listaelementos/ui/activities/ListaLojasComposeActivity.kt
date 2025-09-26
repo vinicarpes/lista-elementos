@@ -42,6 +42,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.listaelementos.R
 import com.example.listaelementos.dto.LojaParaListagemDTO
 import com.example.listaelementos.ui.components.BotaoPrimario
+import com.example.listaelementos.ui.components.ListaComprasTopBar
 import com.example.listaelementos.ui.theme.AppTheme
 import com.example.listaelementos.ui.viewmodels.ListaLojasComposeViewModel
 import com.example.listaelementos.ui.viewmodels.LojaState
@@ -55,14 +56,12 @@ class ListaLojasComposeActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContent {
             AppTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                Scaffold(
+                    topBar = { ListaComprasTopBar(this) },
+                    modifier = Modifier.fillMaxSize()) { innerPadding ->
                     ListaLojas(
                         viewModel = viewModel,
-                        modifier = Modifier
-                            .padding(8.dp)
-                            .padding(innerPadding)
-                            .fillMaxWidth()
-                            .padding(top = 40.dp)
+                        innerPadding = innerPadding
                     )
                 }
             }
@@ -120,15 +119,13 @@ private fun ElementoLista(loja: LojaParaListagemDTO) {
 }
 
 @Composable
-private fun ListaLojas(viewModel: ListaLojasComposeViewModel, modifier: Modifier) {
+private fun ListaLojas(viewModel: ListaLojasComposeViewModel, innerPadding: PaddingValues) {
 
     val state by viewModel.lojaState.collectAsState()
     val context = LocalContext.current
 
-    LazyColumn {
+    LazyColumn (contentPadding = innerPadding){
         item {
-            val titulo = "Lista de Lojas"
-            Titulo(titulo)
             BotaoPrimario(
                 text = stringResource(
                     R.string.adicionar_produto
@@ -148,7 +145,7 @@ private fun ListaLojas(viewModel: ListaLojasComposeViewModel, modifier: Modifier
                 item {
                     Text(
                         text = "Carregando...",
-                        modifier = modifier,
+                        modifier = Modifier,
                         textAlign = TextAlign.Center
                     )
                 }
@@ -162,12 +159,12 @@ private fun ListaLojas(viewModel: ListaLojasComposeViewModel, modifier: Modifier
 
             is LojaState.Error -> {
                 val message = (state as LojaState.Error).message
-                item { Text("Erro: $message", modifier = modifier, textAlign = TextAlign.Center) }
+                item { Text("Erro: $message", modifier = Modifier, textAlign = TextAlign.Center) }
             }
 
             is LojaState.Vazio -> {
                 val message = (state as LojaState.Vazio).message
-                item { Text(message, modifier = modifier, textAlign = TextAlign.Center) }
+                item { Text(message, modifier = Modifier, textAlign = TextAlign.Center) }
             }
         }
     }
@@ -203,7 +200,7 @@ private fun PreviewListaLojas() {
         Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
             ListaLojas(
                 viewModel = viewModel(),
-                modifier = Modifier.padding(innerPadding)
+                innerPadding = innerPadding
             )
         }
     }
