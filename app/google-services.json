@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "528157250101",
+    "project_id": "lista-elementos",
+    "storage_bucket": "lista-elementos.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:528157250101:android:40d6a11bffde5e3df1d77c",
+        "android_client_info": {
+          "package_name": "com.example.listaelementos"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBqNR1EZvo-BjQmvBE-DBsco-JaRZyYpDI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
