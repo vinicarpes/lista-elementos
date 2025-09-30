@@ -4,7 +4,7 @@ import com.example.listaelementos.R.string.erro_buscar_lojas
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.listaelementos.dto.LojaParaListagemDTO
+import com.example.listaelementos.dto.LojaParaListagemUi
 import com.example.listaelementos.usecases.LojaUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -47,7 +47,7 @@ class ListaLojasComposeViewModel(
 
     open class LojaState {
         object Loading : LojaState()
-        data class Success(val lojas: List<LojaParaListagemDTO>) : LojaState()
+        data class Success(val lojas: List<LojaParaListagemUi>) : LojaState()
         data class Error(val message: String) : LojaState()
         data class Vazio(val message: String) : LojaState()
     }
