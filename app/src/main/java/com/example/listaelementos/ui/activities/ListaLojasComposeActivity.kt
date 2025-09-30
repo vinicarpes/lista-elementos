@@ -39,6 +39,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.listaelementos.R
 import com.example.listaelementos.dto.LojaParaListagemUi
+import com.example.listaelementos.ui.components.BotaoPrimario
+import com.example.listaelementos.ui.components.ListaComprasTopBar
 import com.example.listaelementos.ui.theme.AppTheme
 import com.example.listaelementos.ui.viewmodels.ListaLojasComposeViewModel
 import com.example.listaelementos.ui.viewmodels.LojaState
@@ -52,14 +54,12 @@ class ListaLojasComposeActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContent {
             AppTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                Scaffold(
+                    topBar = { ListaComprasTopBar(this) },
+                    modifier = Modifier.fillMaxSize()) { innerPadding ->
                     ListaLojas(
                         viewModel = viewModel,
-                        modifier = Modifier
-                            .padding(8.dp)
-                            .padding(innerPadding)
-                            .fillMaxWidth()
-                            .padding(top = 40.dp)
+                        innerPadding = innerPadding
                     )
                 }
             }
@@ -112,38 +112,33 @@ private fun ElementoLista(loja: LojaParaListagemUi) {
 }
 
 @Composable
-private fun BotaoAdicionarProduto() {
-    val context = LocalContext.current
-    Button(
-        onClick = { context.startActivity(Intent(context, CadastroComposeActivity::class.java)) },
-        contentPadding = PaddingValues(16.dp, 12.dp),
-        shape = RoundedCornerShape(24.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-    ) {
-        val adicionarProduto = stringResource(id = R.string.adicionar_produto)
-        Text(text = adicionarProduto)
-    }
-}
-
-@Composable
-private fun ListaLojas(viewModel: ListaLojasComposeViewModel, modifier: Modifier) {
+private fun ListaLojas(viewModel: ListaLojasComposeViewModel, innerPadding: PaddingValues) {
 
     val state by viewModel.lojaState.collectAsState()
+    val context = LocalContext.current
 
-    LazyColumn {
+    LazyColumn (contentPadding = innerPadding){
         item {
-            val titulo = stringResource(id = R.string.lista_compras)
-            Titulo(titulo)
-            BotaoAdicionarProduto()
+            BotaoPrimario(
+                text = stringResource(
+                    R.string.adicionar_produto
+                ),
+                onClick = {
+                    context.startActivity(
+                        Intent(
+                            context,
+                            CadastroComposeActivity::class.java
+                        )
+                    )
+                },
+            )
         }
         when (state) {
             is LojaState.Loading -> {
                 item {
                     Text(
                         text = "Carregando...",
-                        modifier = modifier,
+                        modifier = Modifier,
                         textAlign = TextAlign.Center
                     )
                 }
@@ -157,12 +152,12 @@ private fun ListaLojas(viewModel: ListaLojasComposeViewModel, modifier: Modifier
 
             is LojaState.Error -> {
                 val message = (state as LojaState.Error).message
-                item { Text("Erro: $message", modifier = modifier, textAlign = TextAlign.Center) }
+                item { Text("Erro: $message", modifier = Modifier, textAlign = TextAlign.Center) }
             }
 
             is LojaState.Vazio -> {
                 val message = (state as LojaState.Vazio).message
-                item { Text(message, modifier = modifier, textAlign = TextAlign.Center) }
+                item { Text(message, modifier = Modifier, textAlign = TextAlign.Center) }
             }
         }
     }
@@ -188,7 +183,7 @@ private fun PreviewTitulo() {
 @Preview
 @Composable
 private fun PreviewBotaoAdicionarProduto() {
-    BotaoAdicionarProduto()
+    BotaoPrimario("Adicionar Produto", onClick = {})
 }
 
 @Preview
@@ -198,7 +193,7 @@ private fun PreviewListaLojas() {
         Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
             ListaLojas(
                 viewModel = viewModel(),
-                modifier = Modifier.padding(innerPadding)
+                innerPadding = innerPadding
             )
         }
     }
