@@ -18,8 +18,9 @@ data class ProdutoEntity(
     var id: Int = 0
         get() = field
 
-    constructor(nome: String, valor: Double, quantidade: Int) : this(nome, valor, quantidade, null)
-
+    constructor(id: Int? = null, nome: String, valor: Double, quantidade: Int) : this(nome, valor, quantidade, null){
+        this.id = id ?: 0
+    }
     @get:Ignore
     val fotoBitmap: Bitmap?
         get() = foto?.let { BitmapFactory.decodeByteArray(it, 0, it.size) }

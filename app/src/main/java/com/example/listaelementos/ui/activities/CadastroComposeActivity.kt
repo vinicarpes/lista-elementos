@@ -1,17 +1,13 @@
 package com.example.listaelementos.ui.activities
 
-import android.os.Bundle
 import android.R.drawable.ic_menu_camera
+import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
-import com.example.listaelementos.R.string
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -23,14 +19,19 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -38,56 +39,102 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.listaelementos.R.string
+import com.example.listaelementos.domain.models.Produto
 import com.example.listaelementos.ui.theme.AppTheme
 import com.example.listaelementos.ui.viewmodels.CadastroComposeViewModel
 import com.example.listaelementos.ui.viewmodels.ProdutoFormState
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class CadastroComposeActivity : AppCompatActivity() {
     private val viewModel: CadastroComposeViewModel by viewModel<CadastroComposeViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val produto = intent.getSerializableExtra("produto") as? Produto
+        Log.d("CadastroProduto", "produto recebido: $produto")
         setContent {
             AppTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                val scope = rememberCoroutineScope()
+                val snackbarHostState = remember { SnackbarHostState() }
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                    snackbarHost = {
+                        SnackbarHost(hostState = snackbarHostState)
+                    }
+                ) { innerPadding ->
                     FormularioCadastroDeProduto(
                         modifier = Modifier.padding(innerPadding),
                         viewModel = viewModel,
-                        aoSalvarComSucesso = {
-                            finish()
-                        }
+                        exibirMensagemRetornada = { mensagem ->
+                            scope.launch {
+                                 snackbarHostState
+                                    .showSnackbar(
+                                        message = mensagem,
+                                        actionLabel = "Fechar",
+                                        duration = SnackbarDuration.Indefinite
+                                    )
+                            }
+                        },
+                        context = this,
+                        produto = produto
                     )
                 }
             }
         }
     }
+
+    companion object {
+        const val NOME_PRODUTO = "produto"
+    }
+
 }
 
 
 @Composable
 private fun FormularioCadastroDeProduto(
     modifier: Modifier,
+    context: CadastroComposeActivity,
     viewModel: CadastroComposeViewModel,
-    aoSalvarComSucesso: () -> Unit
+    exibirMensagemRetornada: (String) -> Unit,
+    produto: Produto?
 ) {
     val state by viewModel.state.collectAsState()
-    val context = LocalContext.current
+
+    LaunchedEffect(produto) {
+        viewModel.atualizaValoresProdutoState(produto)
+    }
+
+    LaunchedEffect(state.mensagemSucesso) {
+        state.mensagemSucesso?.let {
+            exibirMensagemRetornada(it)
+            viewModel.limparMensagem()
+        }
+    }
+    LaunchedEffect(state.mensagemErro) {
+        state.mensagemErro?.let {
+            exibirMensagemRetornada(it)
+            viewModel.limparMensagem()
+        }
+    }
+
     Column(
         modifier = Modifier.padding(top = 40.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        val titulo = stringResource(id = string.lista_compras)
-        TituloCadastro(titulo)
+
+        TituloCadastro(stringResource(string.lista_compras))
         IconeImagem()
         CamposDeTextoFormulario(
             state = state,
             aoAlterarNome = viewModel::aoMudarNome,
             aoAlterarQuantidade = viewModel::aoMudarQuantidade,
-            aoAlterarValor = viewModel::aoMudarValor
+            aoAlterarValor = viewModel::aoMudarValor,
         )
         BotaoInserirProduto(aoSalvar = {
-            viewModel.valiadaParaSalvarProduct(state.nome, state.valor, state.quantidade)
-            aoSalvarComSucesso()
+            viewModel.valiadaParaSalvarProduct{ sucesso ->
+                if(sucesso) context.finish()
+            }
         })
     }
 }
@@ -149,9 +196,7 @@ private fun IconeImagem() {
 private fun BotaoInserirProduto(aoSalvar: () -> Unit = {}) {
     val textoBotao = stringResource(id = string.botao_inserir_produto)
     Button(
-        onClick = {
-            aoSalvar()
-        },
+        onClick = aoSalvar,
         contentPadding = PaddingValues(16.dp, 12.dp),
         shape = RoundedCornerShape(24.dp),
         modifier = Modifier
@@ -212,7 +257,7 @@ private fun PreviewFormularioCadastroDeProduto() {
                 state = state,
                 aoAlterarNome = {},
                 aoAlterarQuantidade = {},
-                aoAlterarValor = {}
+                aoAlterarValor = {},
             )
             BotaoInserirProduto(aoSalvar = {
             })

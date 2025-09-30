@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -51,6 +52,7 @@ import com.example.listaelementos.ui.theme.AppTheme
 import com.example.listaelementos.ui.viewmodels.MainComposeViewModel
 import com.example.listaelementos.ui.viewmodels.ProdutoComposeState
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.io.Serializable
 
 class MainComposeActivity : AppCompatActivity() {
     private val viewModel: MainComposeViewModel by viewModel<MainComposeViewModel>()
@@ -89,12 +91,19 @@ private fun Titulo(msg: String) {
 
 @Composable
 private fun ElementoLista(produto: Produto, aoRemoverProduto: (produto: Produto) -> Unit) {
+    val context = LocalContext.current
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .padding(8.dp)
             .fillMaxWidth()
             .border(border = BorderStroke(1.dp, Color.Gray))
+            .clickable(enabled = true, onClick = {
+                Log.i("MainComposeActivity", "Clicou no elemento $produto")
+                val intent = Intent(context, CadastroComposeActivity::class.java)
+                intent.putExtra("produto", produto as Serializable)
+                context.startActivity(intent)
+            })
     ) {
         Image(
             painter = painterResource(ic_menu_camera),
@@ -159,7 +168,15 @@ fun ListaCompras(viewModel: MainComposeViewModel, modifier: Modifier) {
             val titulo = stringResource(id = R.string.lista_compras)
             Titulo(titulo)
             BotaoAdicionarProduto()
-            ValorDaCompra((state as ProdutoComposeState.Success).valorTotal)
+            when (val s = state) {
+                is ProdutoComposeState.Loading -> {
+                    ValorDaCompra("")
+                }
+
+                is ProdutoComposeState.Success -> {
+                    ValorDaCompra(s.valorTotal)
+                }
+            }
         }
         when (state) {
             is ProdutoComposeState.Loading -> {
