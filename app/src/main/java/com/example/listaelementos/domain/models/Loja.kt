@@ -1,26 +1,37 @@
 package com.example.listaelementos.domain.models
 
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import java.math.BigDecimal
 
+@Serializable
 data class Loja(
     val uuid: String,
     val name: String,
     val slug: String,
     val image: String,
     val phone: String,
-    val is_online: Boolean,
-    val delivery_time: Int,
-    val cooking_time: Int,
-    val can_pickup: Boolean,
+    @SerialName("is_online")
+    val isOnline: Boolean,
+    @SerialName("delivery_time")
+    val deliveryTime: Int,
+    @SerialName("cooking_time")
+    val cookingTime: Int,
+    @SerialName("can_pickup")
+    val canPickup: Boolean,
     val location: String,
-    val minimum_order_price: Int,
+    @SerialName("minimum_order_price")
+    val minimumOrderPrice: Int,
     val description: String,
     val categories: List<Categoria>,
-    val payment_methods: List<MetodoPagamento>,
+    @SerialName("payment_methods")
+    val paymentMethods: List<MetodoPagamento>,
     val address: Endereco,
-    val company_type: String,
-    val formatted_address: String,
-    val city_id: Int,
+    @SerialName("company_type")
+    val companyType: String,
+    @SerialName("formatted_address")
+    val formattedAddress: String,
+    val cityId: Int,
     val distance: BigDecimal,
     val new: Boolean
 )

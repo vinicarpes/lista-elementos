@@ -9,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -30,7 +29,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -40,7 +38,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.listaelementos.R
-import com.example.listaelementos.dto.LojaParaListagemDTO
+import com.example.listaelementos.dto.LojaParaListagemUi
 import com.example.listaelementos.ui.theme.AppTheme
 import com.example.listaelementos.ui.viewmodels.ListaLojasComposeViewModel
 import com.example.listaelementos.ui.viewmodels.LojaState
@@ -89,7 +87,7 @@ private fun Titulo(msg: String) {
 }
 
 @Composable
-private fun ElementoLista(loja: LojaParaListagemDTO) {
+private fun ElementoLista(loja: LojaParaListagemUi) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
@@ -105,16 +103,11 @@ private fun ElementoLista(loja: LojaParaListagemDTO) {
                 .clip(CircleShape)
                 .width(40.dp)
         )
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(8.dp)
-        ) {
-            Column {
-                Text(
-                    text = loja.name,
-                )
-            }
-        }
+        Text(
+            modifier = Modifier.padding(8.dp),
+            textAlign = TextAlign.Center,
+            text = loja.name,
+        )
     }
 }
 
@@ -181,7 +174,7 @@ private fun PreviewElementoLista() {
     AppTheme(darkTheme = true) {
         Scaffold { innerPadding ->
             val mod = Modifier.padding(innerPadding)
-            ElementoLista(LojaParaListagemDTO("Nome bacana", "Link de imagem", 10.0.toBigDecimal()))
+            ElementoLista(LojaParaListagemUi("Nome bacana", "Link de imagem", 10.0.toBigDecimal()))
         }
     }
 }
