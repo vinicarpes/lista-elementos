@@ -19,7 +19,7 @@ class MainViewModel(private val repository: ProdutoRepository) : ViewModel() {
     fun getProdutos(){
         viewModelScope.launch(Dispatchers.IO) {
             _state.postValue(ProdutoState.Loading)
-            val result = repository.buscarProdutos()
+            val result = repository.buscarTodos()
             result.onSuccess { entidades ->
                 val produtos = entidades.map { entidade -> entidade.paraProduto() }
                 _state.postValue(ProdutoState.Success(produtos))
