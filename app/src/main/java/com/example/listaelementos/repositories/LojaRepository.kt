@@ -5,9 +5,9 @@ import com.example.listaelementos.retrofit.service.ApiService
 
 class LojaRepository(
     private val apiService: ApiService
-) {
+) : IRemoteRepository<RemoteLojasDTO>{
 
-    suspend fun getLojas(): RemoteLojasDTO? {
+    override suspend fun buscarDados(): RemoteLojasDTO? {
         var lojas: RemoteLojasDTO? = null
         runCatching {
             lojas = apiService.getLojas()

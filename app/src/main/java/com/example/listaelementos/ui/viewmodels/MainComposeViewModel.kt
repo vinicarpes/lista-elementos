@@ -22,9 +22,8 @@ class MainComposeViewModel(private val repository: ProdutoRepository) : ViewMode
     fun getProdutos() {
         viewModelScope.launch(Dispatchers.IO) {
             _state.update { ProdutoComposeState.Loading }
-            val result = repository.buscarProdutos()
-            result.onSuccess { entidades ->
-                val produtos = entidades.map { entidade -> entidade.paraProduto() }
+            val result = repository.buscarTodos()
+            result.onSuccess { produtos ->
                 _state.update {
                     ProdutoComposeState.Success(
                         produtos,
