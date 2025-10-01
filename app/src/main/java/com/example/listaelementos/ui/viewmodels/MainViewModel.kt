@@ -19,9 +19,8 @@ class MainViewModel(private val repository: ProdutoRepository) : ViewModel() {
     fun getProdutos(){
         viewModelScope.launch(Dispatchers.IO) {
             _state.postValue(ProdutoState.Loading)
-            val result = repository.buscarProdutos()
-            result.onSuccess { entidades ->
-                val produtos = entidades.map { entidade -> entidade.paraProduto() }
+            val result = repository.buscarTodos()
+            result.onSuccess { produtos ->
                 _state.postValue(ProdutoState.Success(produtos))
             }.onFailure { e->
                 _state.postValue(ProdutoState.Error(e.message ?: "Erro ao buscar produtos"))

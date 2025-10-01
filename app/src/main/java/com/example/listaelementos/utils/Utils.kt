@@ -15,6 +15,6 @@ fun bitmapToByteArray(bitmap: Bitmap): ByteArray {
 
 object Constants {
     object URL {
-        const val BASE_URL = "https://poetrydb.org"
+        const val BASE_URL = "https://bffapp-cerberus-mktplace.devmuch.io/"
     }
 }

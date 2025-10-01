@@ -8,36 +8,38 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 
 class ProdutoRepository (
-    private val dao: ProdutoDao)
+    private val dao: ProdutoDao) : ILocalRepository<Produto>
  {
     val produtos get() = dao.buscarProdutos()
 
-     suspend fun buscarProdutos() : Result<List<ProdutoEntity>> = withContext(IO) {
+     override suspend fun buscarTodos() : Result<List<Produto>> = withContext(IO) {
          runCatching {
-             dao.buscarProdutos()
+             dao.buscarProdutos().map{
+                 it.paraProduto()
+             }
          }
      }
 
-    suspend fun salvar(prod: Produto) : Result<Unit> = withContext(IO) {
+    override suspend fun salvar(item: Produto) : Result<Unit> = withContext(IO) {
         runCatching {
-            dao.inserir(prod.paraEntidade())
+            dao.inserir(item.paraEntidade())
         }
     }
 
-     suspend fun remover(produto: Produto) : Result<Unit> = withContext(IO) {
+     override suspend fun remover(item: Produto) : Result<Unit> = withContext(IO) {
          runCatching {
-             dao.deletarPorId(produto.id)
+             dao.deletarPorId(item.id)
          }
      }
      
-     suspend fun atualizar(produto: Produto, id: Int) : Result<Unit> = withContext(IO) {
+     override suspend fun atualizar(item: Produto, id: Int) : Result<Unit> = withContext(IO) {
          runCatching {
-             val entidade = produto.paraEntidade()
+             val entidade = item.paraEntidade()
              entidade.id = id
              dao.atualizar(entidade)
          }
      }
-}
+ }
 
 fun Produto.paraEntidade() = ProdutoEntity(
     nome = this.nome,
