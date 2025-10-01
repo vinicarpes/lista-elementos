@@ -11,7 +11,7 @@ class LojaUseCase(private val repository: LojaRepository) {
     suspend fun buscarLojas(): Result<List<LojaParaListagemUi>> = withContext(IO) {
         runCatching {
             dtoParaListaLojas(
-                repository.getLojas())
+                repository.buscarDados())
         }
     }
 
