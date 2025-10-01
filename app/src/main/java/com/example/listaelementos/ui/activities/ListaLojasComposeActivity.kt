@@ -9,6 +9,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,8 +20,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -40,6 +40,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.listaelementos.R
 import com.example.listaelementos.dto.LojaParaListagemUi
 import com.example.listaelementos.ui.components.BotaoPrimario
+import com.example.listaelementos.ui.components.IndeterminateCircularIndicator
 import com.example.listaelementos.ui.components.ListaComprasTopBar
 import com.example.listaelementos.ui.theme.AppTheme
 import com.example.listaelementos.ui.viewmodels.ListaLojasComposeViewModel
@@ -56,7 +57,8 @@ class ListaLojasComposeActivity : AppCompatActivity() {
             AppTheme {
                 Scaffold(
                     topBar = { ListaComprasTopBar(this) },
-                    modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    modifier = Modifier.fillMaxSize()
+                ) { innerPadding ->
                     ListaLojas(
                         viewModel = viewModel,
                         innerPadding = innerPadding
@@ -117,47 +119,56 @@ private fun ListaLojas(viewModel: ListaLojasComposeViewModel, innerPadding: Padd
     val state by viewModel.lojaState.collectAsState()
     val context = LocalContext.current
 
-    LazyColumn (contentPadding = innerPadding){
-        item {
-            BotaoPrimario(
-                text = stringResource(
-                    R.string.adicionar_produto
-                ),
-                onClick = {
-                    context.startActivity(
-                        Intent(
-                            context,
-                            CadastroComposeActivity::class.java
-                        )
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(innerPadding)
+    ) {
+        BotaoPrimario(
+            text = stringResource(
+                R.string.adicionar_produto
+            ),
+            onClick = {
+                context.startActivity(
+                    Intent(
+                        context,
+                        CadastroComposeActivity::class.java
                     )
-                },
-            )
-        }
+                )
+            }
+        )
         when (state) {
             is LojaState.Loading -> {
-                item {
-                    Text(
-                        text = "Carregando...",
-                        modifier = Modifier,
-                        textAlign = TextAlign.Center
-                    )
-                }
+                IndeterminateCircularIndicator(
+                    modifier = Modifier.align(Alignment.Center)
+                )
             }
 
             is LojaState.Success -> {
-                items((state as LojaState.Success).lojas) { loja ->
-                    ElementoLista(loja)
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = innerPadding,
+                    verticalArrangement = Arrangement.Top,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    items((state as LojaState.Success).lojas) { loja ->
+                        ElementoLista(loja)
+                    }
                 }
             }
 
             is LojaState.Error -> {
                 val message = (state as LojaState.Error).message
-                item { Text("Erro: $message", modifier = Modifier, textAlign = TextAlign.Center) }
+                Text(
+                    "Erro: $message",
+                    modifier = Modifier,
+                    textAlign = TextAlign.Center
+                )
             }
 
             is LojaState.Vazio -> {
                 val message = (state as LojaState.Vazio).message
-                item { Text(message, modifier = Modifier, textAlign = TextAlign.Center) }
+                Text(message, modifier = Modifier, textAlign = TextAlign.Center)
             }
         }
     }
