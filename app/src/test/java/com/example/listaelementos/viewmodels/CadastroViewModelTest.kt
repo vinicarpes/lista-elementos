@@ -1,6 +1,8 @@
-package com.example.listaelementos
+package com.example.listaelementos.viewmodels
+
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.example.listaelementos.domain.models.Produto
+import com.example.listaelementos.getOrAwaitValue
 import com.example.listaelementos.repositories.ProdutoRepository
 import com.example.listaelementos.ui.viewmodels.CadastroViewModel
 import io.kotest.matchers.shouldBe
@@ -18,19 +20,20 @@ class CadastroViewModelTest {
     private val viewModel = CadastroViewModel(repo)
 
     @Test
-    fun `deve chamar metodo salvar do repositorio e atualizar o livedata quando salvar um produto valido`() = runTest {
-        val p = Produto("arroz", 10.0, 10, null)
+    fun `deve chamar metodo salvar do repositorio e atualizar o livedata quando salvar um produto valido`() =
+        runTest {
+            val p = Produto("arroz", 10.0, 10, null)
 
-        coEvery { repo.salvar(p) }.returns(Result.success(Unit))
+            coEvery { repo.salvar(p) }.returns(Result.success(Unit))
 
-        viewModel.salvar(p)
+            viewModel.salvar(p)
 
-        coVerify { repo.salvar(p) }
+            coVerify { repo.salvar(p) }
 
-        val produtoFoiSalvo = viewModel.salvoComSucesso.getOrAwaitValue()
+            val produtoFoiSalvo = viewModel.salvoComSucesso.getOrAwaitValue()
 
-        produtoFoiSalvo shouldBe true
-    }
+            produtoFoiSalvo shouldBe true
+        }
 
     @Test
     fun `deve retornar falso quando receber campos vazios em check fields`() {
@@ -58,4 +61,3 @@ class CadastroViewModelTest {
         coVerify { repo.salvar(p) }
     }
 }
-
