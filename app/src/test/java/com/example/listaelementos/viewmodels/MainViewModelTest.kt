@@ -1,4 +1,4 @@
-package com.example.listaelementos
+package com.example.listaelementos.viewmodels
 
 import com.example.listaelementos.domain.models.Produto
 import com.example.listaelementos.repositories.ProdutoRepository

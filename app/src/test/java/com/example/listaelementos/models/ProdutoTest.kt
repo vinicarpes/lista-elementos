@@ -1,4 +1,4 @@
-package com.example.listaelementos
+package com.example.listaelementos.models
 
 import com.example.listaelementos.database.entities.ProdutoEntity
 import com.example.listaelementos.domain.models.Produto
@@ -24,7 +24,7 @@ class ProdutoTest {
 
     @Test
     fun `deve retornar false quando nome for vazio`(){
-        val inprodutoInvalido = Produto ("", 10.0, 56, null)
+        val inprodutoInvalido = Produto("", 10.0, 56, null)
         val ehValido = inprodutoInvalido.validaProduto()
         ehValido shouldBe false
     }
