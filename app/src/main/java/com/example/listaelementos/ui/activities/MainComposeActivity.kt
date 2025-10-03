@@ -183,6 +183,8 @@ fun ListaCompras(viewModel: MainComposeViewModel, innerPadding: PaddingValues) {
                 is ProdutoComposeState.Success -> {
                     ValorDaCompra(s.valorTotal)
                 }
+
+                is ProdutoComposeState.Error -> ValorDaCompra("")
             }
         }
         when (state) {
