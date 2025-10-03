@@ -1,6 +1,13 @@
 package com.example.listaelementos.ui.viewmodels
 
+import android.R
 import android.util.Log
+import androidx.compose.ui.res.stringResource
+import com.example.listaelementos.R.string.produto_salvo_com_sucesso
+import com.example.listaelementos.R.string.produto_nao_foi_salvo
+import com.example.listaelementos.R.string.produto_atualizado_com_sucesso
+import com.example.listaelementos.R.string.produto_nao_foi_atualizado
+import com.example.listaelementos.R.string.preencha_todos_os_campos
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.listaelementos.domain.models.Produto
@@ -20,9 +27,9 @@ class CadastroComposeViewModel(private val repository: ProdutoRepository) : View
         viewModelScope.launch(Dispatchers.IO) {
             val resultado = repository.salvar(prod)
             resultado.onSuccess {
-                atualizarMensagemSucesso("Produto atualizado com sucesso!")
+                atualizarMensagemSucesso(produto_salvo_com_sucesso.toString())
             }.onFailure {
-                atualizarMensagemErro("Não foi possível atualizar o produto na lista")
+                atualizarMensagemErro(produto_nao_foi_salvo.toString())
             }
 
         }
@@ -32,9 +39,9 @@ class CadastroComposeViewModel(private val repository: ProdutoRepository) : View
         viewModelScope.launch(Dispatchers.IO) {
             val resultado = repository.atualizar(prod, id)
             resultado.onSuccess {
-                atualizarMensagemSucesso("Produto atualizado com sucesso!")
+                atualizarMensagemSucesso(produto_atualizado_com_sucesso.toString())
             }.onFailure {
-                atualizarMensagemErro("Não foi possível atualizar o produto na lista")
+                atualizarMensagemErro(produto_nao_foi_atualizado.toString())
             }
 
         }
@@ -65,8 +72,7 @@ class CadastroComposeViewModel(private val repository: ProdutoRepository) : View
                 sucesso(false)
             }
         } catch (e : NumberFormatException){
-            atualizarMensagemErro("Preencha todos os campos corretamente")
-            Log.d("CadatroComposeViewModel", e.message.toString())
+            atualizarMensagemErro(preencha_todos_os_campos.toString())
         }
 
     }

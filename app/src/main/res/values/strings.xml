@@ -4,6 +4,12 @@
     <string name="adicionar_produto">Adicionar produto</string>
     <string name="erro_buscar_produtos">Erro ao buscar produtos</string>
     <string name="erro_buscar_lojas">Erro ao buscar lojas</string>
+    <string name="lojas_nao_encontradas">Não foi possível encontrar nenhuma loja :(</string>
+    <string name="produto_salvo_com_sucesso">Produto salvo com sucesso!</string>
+    <string name="produto_nao_foi_salvo">Não foi possível salvar o produto</string>
+    <string name="produto_atualizado_com_sucesso">Produto atualizado com sucesso!</string>
+    <string name="produto_nao_foi_atualizado">Não foi possível atualizar o produto</string>
+    <string name="preencha_todos_os_campos">Preencha todos os campos corretamente</string>
     <string name="cadastro_produto">Cadastro de Produto</string>
     <string name="quantidade_padrao">Quantidade</string>
     <string name="valor_padrao">R$0.00</string>

@@ -14,6 +14,8 @@ import com.example.listaelementos.ui.viewmodels.ListaLojasComposeViewModel
 import com.example.listaelementos.ui.viewmodels.MainViewModel
 import com.example.listaelementos.ui.viewmodels.MainComposeViewModel
 import com.example.listaelementos.usecases.LojaUseCase
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
@@ -22,6 +24,7 @@ import retrofit2.Retrofit
 
 val appModule = module {
     singleOf(::ProdutoRepository)
+    single<CoroutineDispatcher> { Dispatchers.IO }
     viewModelOf(::MainViewModel)
     viewModelOf(::CadastroViewModel)
     viewModelOf(::MainComposeViewModel)
