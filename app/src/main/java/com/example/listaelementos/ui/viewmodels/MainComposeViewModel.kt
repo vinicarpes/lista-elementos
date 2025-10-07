@@ -7,6 +7,7 @@ import com.example.listaelementos.R
 import com.example.listaelementos.domain.models.Produto
 import com.example.listaelementos.repositories.ProdutoRepository
 import com.example.listaelementos.repositories.paraProduto
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,16 +16,18 @@ import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.util.Locale
 
-class MainComposeViewModel(private val repository: ProdutoRepository) : ViewModel() {
-    private val _state = MutableStateFlow(ProdutoComposeState())
+class MainComposeViewModel(
+    private val repository: ProdutoRepository,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+) : ViewModel() {
+    private val _state = MutableStateFlow<ProdutoComposeState>(ProdutoComposeState.Loading)
     val state = _state.asStateFlow()
 
     fun getProdutos() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(dispatcher) {
             _state.update { ProdutoComposeState.Loading }
-            val result = repository.buscarProdutos()
-            result.onSuccess { entidades ->
-                val produtos = entidades.map { entidade -> entidade.paraProduto() }
+            val result = repository.buscarTodos()
+            result.onSuccess { produtos ->
                 _state.update {
                     ProdutoComposeState.Success(
                         produtos,
@@ -39,8 +42,7 @@ class MainComposeViewModel(private val repository: ProdutoRepository) : ViewMode
     }
 
     fun removerProduto(produto: Produto) {
-        viewModelScope.launch(Dispatchers.IO) {
-            Log.d("VIEWMODEL", "Tentando remover: $produto")
+        viewModelScope.launch(dispatcher) {
             val result = repository.remover(produto)
             result.onSuccess {
                 getProdutos()
@@ -60,7 +62,7 @@ class MainComposeViewModel(private val repository: ProdutoRepository) : ViewMode
     }
 }
 
-open class ProdutoComposeState {
+sealed class ProdutoComposeState {
     object Loading : ProdutoComposeState()
     data class Success(val produtos: List<Produto>, val valorTotal: String = "0.00") :
         ProdutoComposeState()

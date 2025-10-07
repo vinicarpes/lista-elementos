@@ -1,15 +1,12 @@
-package com.example.listaelementos
+package com.example.listaelementos.repositories
 
 import com.example.listaelementos.database.dao.ProdutoDao
 import com.example.listaelementos.domain.models.Produto
-import com.example.listaelementos.repositories.ProdutoRepository
-import com.example.listaelementos.repositories.paraEntidade
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
-
 
 class ProdutoRepositoryTest {
 
